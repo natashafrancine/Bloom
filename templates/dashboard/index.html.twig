@@ -1,0 +1,286 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BLOOM Dashboard{% endblock %}
+
+{% block head_styles %}
+<style>
+    :root {
+        --color-primary: #DB2777;
+        --color-primary-light: #FCE7F3;
+        --color-secondary: #312E81;
+        --color-text: #374151;
+        --color-heading: #1F2937;
+        --color-bg: #F9FAFB;
+        --color-white: #FFFFFF;
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background-color: var(--color-bg);
+        display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background-color: var(--color-white);
+        box-shadow: var(--shadow-md);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 1rem;
+    }
+
+    .sidebar h2 {
+        color: var(--color-primary);
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: var(--color-text);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: background 0.2s ease, color 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-links a:hover {
+        background-color: var(--color-primary-light);
+        color: var(--color-primary);
+    }
+    
+    .nav-links a i {
+        margin-right: 8px;
+    }
+
+    /* Main Content */
+    .main {
+        flex: 1;
+        padding: 2rem;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .header h1 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: var(--color-heading);
+    }
+    
+    .back-link {
+        color: var(--color-text);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .back-link:hover {
+        background-color: #E5E7EB;
+    }
+
+    /* Cards */
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background-color: var(--color-white);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .card i {
+        font-size: 2rem;
+        color: var(--color-primary);
+    }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .card h3 {
+        margin: 0;
+        color: var(--color-text);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .card p {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--color-primary);
+    }
+
+    /* Table */
+    .table-wrapper {
+        background-color: var(--color-white);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background-color: var(--color-primary-light);
+    }
+
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    th {
+        font-weight: bold;
+        color: var(--color-heading);
+    }
+
+    tr:hover td {
+        background-color: #F9FAFB;
+    }
+    
+    .status {
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.9em;
+        display: inline-block;
+    }
+    
+    .status.completed {
+        color: #22c55e;
+        background-color: #dcfce7;
+    }
+    
+    .status.pending {
+        color: #f59e0b;
+        background-color: #fef3c7;
+    }
+    
+    .status.cancelled {
+        color: #ef4444;
+        background-color: #fee2e2;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+    <div class="sidebar">
+        <h2>🌸 BLOOM</h2>
+        <nav class="nav-links">
+            <a href="#"><i class="fas fa-chart-bar"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-box"></i> Orders</a>
+            <a href="#"><i class="fas fa-tag"></i> Products</a>
+            <a href="#"><i class="fas fa-users"></i> Customers</a>
+            <a href="#"><i class="fas fa-file-alt"></i> Reports</a>
+            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h1>Welcome Back, Admin</h1>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Site</a>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-check-circle"></i>
+                <div class="card-content">
+                    <h3>Total Orders</h3>
+                    <p>123</p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-dollar-sign"></i>
+                <div class="card-content">
+                    <h3>Total Revenue</h3>
+                    <p>$1,250</p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-users"></i>
+                <div class="card-content">
+                    <h3>Customers</h3>
+                    <p>456</p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-truck-fast"></i>
+                <div class="card-content">
+                    <h3>Pending Deliveries</h3>
+                    <p>8</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <h2>Recent Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#001</td>
+                        <td>Jane Doe</td>
+                        <td>Rose Bouquet</td>
+                        <td class="status completed">Completed</td>
+                    </tr>
+                    <tr>
+                        <td>#002</td>
+                        <td>John Smith</td>
+                        <td>Tulip Arrangement</td>
+                        <td class="status pending">Pending</td>
+                    </tr>
+                    <tr>
+                        <td>#003</td>
+                        <td>Emily Rose</td>
+                        <td>Sunflower Basket</td>
+                        <td class="status cancelled">Cancelled</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
