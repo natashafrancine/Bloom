@@ -1,3 +1,6 @@
 body {
-    background-color: skyblue;
+    background-color: lightgray;
 }
+
+@import "tailwindcss";
+@source not "../../public";

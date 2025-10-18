@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome to BLOOM{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-0">
+
+    <!-- 🌸 Hero Section -->
+    <section class="hero-section d-flex flex-column justify-content-center align-items-center text-center text-dark">
+        <div class="hero-content position-relative">
+            <h1 class="display-3 fw-bold mb-3" style="font-family: 'Bauhaus93 Regular', sans-serif;">
+                Welcome to <span class="text-pink">BLOOM</span>
+            </h1>
+            <p class="lead mb-4" style="font-family: 'Cascadia Code', monospace;">
+                Discover handcrafted floral creations that bring beauty, joy, and life to every moment.
+            </p>
+            <a href="{{ path('product_index') }}" class="btn btn-shop px-5 py-2 shadow-sm">🌷 Shop Now</a>
+        </div>
+    </section>
+
+    <!-- 🌼 About Section -->
+    <section class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center text-center text-md-start">
+                <div class="col-md-6 mb-4">
+                    <img src="{{ asset('uploads/flower shop.jpg') }}" alt="Bloom Shop" class="about-image shadow-lg">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="fw-bold mb-3" style="font-family: 'Bauhaus93 Regular', sans-serif; color: #DB2777;">
+                        Fresh. Elegant. Bloom.
+                    </h2>
+                    <p class="fs-6 text-muted" style="font-family: 'Cascadia Code', monospace;">
+                        At <strong>BLOOM</strong>, every arrangement tells a story. Whether for love, gratitude, or comfort, our flowers speak the language of the heart — designed with care and passion to brighten your days.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 🌺 Featured Section -->
+    <section class="featured-section text-center py-5">
+        <div class="container">
+            <h2 class="fw-bold mb-3" style="font-family: 'Bauhaus93 Regular', sans-serif; color: #DB2777;">
+                Our Best Sellers
+            </h2>
+            <p class="mb-5 text-muted" style="font-family: 'Cascadia Code', monospace;">
+                Explore our most-loved blooms — timeless, romantic, and full of charm.
+            </p>
+
+            <div class="row justify-content-center g-4">
+                {% set products = [
+                    {'img': 'https://images.unsplash.com/photo-1490616962902-8430cf0c37eb?auto=format&fit=crop&w=800&q=80', 'title': 'Rose Elegance', 'desc': 'Timeless beauty in every petal.'},
+                    {'img': 'https://images.unsplash.com/photo-1494336956603-40f1c58b5e57?auto=format&fit=crop&w=800&q=80', 'title': 'Pink Serenity', 'desc': 'Soft hues for peaceful days.'},
+                    {'img': 'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=800&q=80', 'title': 'Sunny Joy', 'desc': 'Brighten someone’s day 🌻'}
+                ] %}
+
+                {% for product in products %}
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card border-0 rounded-4 shadow-hover">
+                            <img src="{{ product.img }}" class="card-img-top rounded-top-4" alt="{{ product.title }}">
+                            <div class="card-body">
+                                <h5 class="fw-bold" style="font-family: 'Bauhaus93 Regular', sans-serif; color: #DB2777;">
+                                    {{ product.title }}
+                                </h5>
+                                <p class="text-muted small mb-0" style="font-family: 'Cascadia Code', monospace;">
+                                    {{ product.desc }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    :root {
+        --pink: #F4A6B1;
+        --rose: #E8A2B0;
+        --mint: #BFFCC6;
+        --white: #ffffff;
+    }
+
+    body {
+        font-family: 'Cascadia Code', monospace;
+        color: #3d2a2a;
+        overflow-x: hidden;
+
+        /* 🌸 Full-page background image */
+        background-image: url('{{ asset("uploads/pattern.png") }}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    /* 🌸 Hero Section */
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        background: transparent; /* no background color */
+        overflow: hidden;
+    }
+
+    .text-pink {
+        color: #DB2777;
+    }
+
+    .btn-shop {
+        background-color: #F4A6B1; /* solid color */
+        border: none;
+        border-radius: 50px;
+        font-family: 'Bauhaus93 Regular', sans-serif;
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: 0.3s ease;
+    }
+
+    .btn-shop:hover {
+        background-color: #E8A2B0; /* hover solid color */
+        transform: translateY(-3px);
+    }
+
+    /* 🌼 About Section */
+    .about-image {
+        width: 550px;
+        height: 500px;
+        border-radius: 16px;
+        transition: transform 0.4s ease;
+    }
+
+    .about-image:hover {
+        transform: scale(1.05);
+    }
+
+    /* 🌺 Cards */
+    .shadow-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .shadow-hover:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            height: 85vh;
+        }
+        .hero-content h1 {
+            font-size: 2.4rem;
+        }
+        .about-image {
+            width: 85%;
+        }
+    }
+</style>
+{% endblock %}

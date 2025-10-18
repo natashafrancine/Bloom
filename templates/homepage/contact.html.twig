@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact Us - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 style="font-family: 'Bauhaus 93', cursive; color: #DB2777;">Contact Us</h1>
+        <p class="fs-5 text-muted mt-3">
+            We'd love to hear from you! Whether it's an inquiry, feedback, or a custom bouquet request — our friendly team is here to help.
+        </p>
+    </div>
+
+    <div class="row align-items-start g-5">
+        <!-- Contact Form -->
+        <div class="col-md-6">
+            <form>
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-semibold">Your Name</label>
+                    <input type="text" id="name" class="form-control shadow-none" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Your Email</label>
+                    <input type="email" id="email" class="form-control shadow-none" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label fw-semibold">Your Message</label>
+                    <textarea id="message" rows="5" class="form-control shadow-none" placeholder="Type your message here" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-pink w-100 mt-3">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-md-6">
+            <div>
+                <h3 style="color: #DB2777; font-family: 'Bauhaus 93', cursive;">Get in Touch</h3>
+                <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill text-danger me-2"></i>123 Blossom Street, Flower City</p>
+                <p class="text-muted mb-2"><i class="bi bi-telephone-fill text-success me-2"></i>+63 912 345 6789</p>
+                <p class="text-muted mb-4"><i class="bi bi-envelope-fill text-primary me-2"></i>support@bloomshop.com</p>
+
+                <h5 class="fw-semibold" style="color: #DB2777;">Follow us</h5>
+                <div class="d-flex align-items-center gap-3 mt-2">
+                    <a href="#" class="text-dark"><i class="bi bi-facebook fs-4"></i></a>
+                    <a href="#" class="text-dark"><i class="bi bi-instagram fs-4"></i></a>
+                    <a href="#" class="text-dark"><i class="bi bi-twitter-x fs-4"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Cascadia Code', sans-serif;
+        background-color: #fff;
+        color: #374151;
+
+         /* 🌸 Full-page background image */
+        background-image: url('{{ asset("uploads/pattern.png") }}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    .form-label {
+        color: #4B5563;
+        font-size: 15px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #E5E7EB;
+        padding: 10px 12px;
+        font-size: 15px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #DB2777;
+        box-shadow: 0 0 0 2px rgba(219, 39, 119, 0.1);
+    }
+
+    .btn-pink {
+        background-color: #DB2777;
+        border: none;
+        color: #fff;
+        padding: 10px;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: 0.3s ease;
+    }
+
+    .btn-pink:hover {
+        background-color: #BE185D;
+        transform: translateY(-2px);
+    }
+
+    h1, h3, h5 {
+        letter-spacing: 1px;
+    }
+
+    .text-muted {
+        color: #6B7280 !important;
+    }
+
+    @media (max-width: 768px) {
+        .row {
+            text-align: center;
+        }
+
+        .col-md-6 {
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}

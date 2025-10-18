@@ -1,0 +1,4 @@
+favicon:
+  path: /favicon.ico
+  controller: App\Controller\FaviconController
+  methods: [GET]

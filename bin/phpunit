@@ -1,23 +1,31 @@
 #!/usr/bin/env php
 <?php
 
+declare(strict_types=1);
+
+// Ensure timezone is set to avoid warnings
 if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
 
-if (is_file(dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit')) {
-    if (PHP_VERSION_ID >= 80000) {
-        require dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit';
-    } else {
-        define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__).'/vendor/autoload.php');
-        require PHPUNIT_COMPOSER_INSTALL;
-        PHPUnit\TextUI\Command::main();
-    }
-} else {
-    if (!is_file(dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php')) {
-        echo "Unable to find the `simple-phpunit.php` script in `vendor/symfony/phpunit-bridge/bin/`.\n";
-        exit(1);
-    }
+$rootDir = dirname(__DIR__);
+$phpunitBin = $rootDir . '/vendor/bin/phpunit';
+$symfonySimplePhpunit = $rootDir . '/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
 
-    require dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
+// 1️⃣ Check if PHPUnit exists via Composer
+if (is_file($phpunitBin)) {
+    // Execute vendor's PHPUnit binary
+    passthru(escapeshellcmd($phpunitBin) . ' ' . implode(' ', array_map('escapeshellarg', array_slice($argv, 1))));
+    exit(0);
 }
+
+// 2️⃣ Fallback to Symfony PHPUnit Bridge (if available)
+if (is_file($symfonySimplePhpunit)) {
+    require $symfonySimplePhpunit;
+    exit(0);
+}
+
+// 3️⃣ If neither is found, show clear error message
+fwrite(STDERR, "❌ PHPUnit not found.\n");
+fwrite(STDERR, "Run `composer require --dev phpunit/phpunit` or `composer require --dev symfony/phpunit-bridge`\n");
+exit(1);

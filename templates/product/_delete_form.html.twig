@@ -1,0 +1,25 @@
+<form method="post" action="{{ path('product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');" class="d-inline">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+    <button type="submit" class="btn btn-outline-danger px-3 py-2 shadow-sm" style="border-radius: 8px; font-weight: 600;">
+        🗑️ Delete Product
+    </button>
+</form>
+
+<style>
+    .btn-outline-danger {
+        border: 2px solid #DB2777;
+        color: #DB2777;
+        background-color: transparent;
+        transition: 0.3s ease;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #DB2777;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .shadow-sm {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    }
+</style>

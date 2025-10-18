@@ -4,18 +4,17 @@
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-if (!is_dir(dirname(__DIR__).'/vendor')) {
-    throw new LogicException('Dependencies are missing. Try running "composer install".');
-}
-
-if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {
-    throw new LogicException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
-}
-
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
     $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+    // When running from CLI, allow unlimited execution time for long-running commands.
+    if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+        @set_time_limit(0);
+        @ini_set('max_execution_time', '0');
+    }
 
+    // Return the Console Application so the Symfony runtime will use
+    // the ConsoleApplicationRunner instead of the HttpKernelRunner.
     return new Application($kernel);
 };

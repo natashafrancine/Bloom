@@ -1,34 +1,244 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome!{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BLOOM{% endblock %}</title>
 
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,
-        <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22>
-            <text y=%221.2em%22 font-size=%2296%22>🌸</text>
-        </svg>">
+  <!-- 🌸 Website Logo (Favicon) -->
+  <link rel="icon" type="image/png" href="{{ asset('uploads/bloom 2.png') }}">
 
-    <!-- Symfony Stylesheets Block (for global CSS, Tailwind, etc.) -->
-    {% block stylesheets %}{% endblock %}
+  <!-- 🌷 Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom Inline Styles Block -->
-    {% block head_styles %}{% endblock %}
+  <!-- 🌺 Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- 🌼 Custom Font: Bauhaus 93 -->
+  <style>
+    @font-face {
+      font-family: 'Bauhaus 93 Regular';
+      src: url('file:///C:/Users/Nitro/.vscode/CSC%20304/bloom/bloom/public/fonts/Bauhaus%2093%20Regular.ttf') format('truetype');
+    }
+
+    :root {
+      --bloom-primary: #E8A2B0;
+      --bloom-accent: #98FB98;
+      --bloom-dark: #6d214f;
+      --bloom-bg: #fff5f9;
+      --bloom-text: #4a4a4a;
+      --bloom-header: #DB2777;
+    }
+
+    /* 🌺 Navbar */
+    .navbar {
+      background: linear-gradient(135deg, var(--bloom-primary), var(--bloom-accent));
+      padding: 0.8rem 0.8rem;
+      border-bottom: 3px solid white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    /* 🌸 Logo Image */
+    .logo-img {
+      height: 70px;
+      width: 70px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-img:hover {
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    /* 🌺 Brand Text */
+    .navbar-brand span {
+      font-family: 'Bauhaus 93 Regular', sans-serif;
+      font-size: 2.5rem;
+      color: var(--bloom-header);
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .navbar-brand {
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.05);
+    }
+
+    /* 🌸 Nav Links (Smaller Buttons) */
+    .navbar .nav-link {
+      font-family: 'Bauhaus 93 Regular', sans-serif;
+      font-size: 1.5rem;
+      color: var(--bloom-header) !important;
+      font-weight: normal;
+      transition: all 0.3s ease;
+      border-radius: 25px;
+      padding: 5px 12px;
+      letter-spacing: 1px;
+    }
+
+    .navbar .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+      color: #b91c6c !important;
+      transform: scale(1.05);
+    }
+
+    /* 🌸 Active Page Highlight */
+    .navbar .nav-link.active {
+      background-color: #E8A2B0 !important;
+      color: white !important;
+      box-shadow: 0 0 10px rgba(219, 39, 119, 0.8);
+      transform: scale(1.08);
+    }
+
+    /* 🌼 Main Content */
+    main {
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-top: 2rem;
+      padding: 2rem;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1, h2, h3 {
+      font-family: 'Bauhaus 93 Regular', sans-serif;
+      color: var(--bloom-header);
+      letter-spacing: 1.5px;
+    }
+
+    /* 🌷 Buttons */
+    .btn-primary {
+      background-color: var(--bloom-primary);
+      border: none;
+      transition: all 0.3s ease-in-out;
+      padding: 6px 18px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--bloom-accent);
+      color: var(--bloom-dark);
+    }
+
+    .btn-outline-primary {
+      border-color: var(--bloom-primary);
+      color: var(--bloom-primary);
+      padding: 6px 18px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--bloom-primary);
+      color: white;
+    }
+
+    /* 🌻 Footer */
+    footer {
+      background: linear-gradient(135deg, var(--bloom-accent), var(--bloom-primary));
+      color: white;
+      border-top: 3px solid white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+
+    footer small {
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand span {
+        font-size: 2rem;
+      }
+      .navbar .nav-link {
+        font-size: 1rem;
+        padding: 4px 10px;
+      }
+      main {
+        padding: 1rem;
+      }
+    }
+  </style>
+
+  {% block stylesheets %}{% endblock %}
 </head>
-<body>
-    <!-- Optional Global Header (Remove if not needed) -->
-    {% block header %}{% endblock %}
 
-    <!-- Main Page Content -->
-    <main>
-        {% block body %}{% endblock %}
-    </main>
+<body class="d-flex flex-column min-vh-100 fade-out">
 
-    <!-- Symfony JavaScripts -->
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-    {% endblock %}
+  <!-- 🌸 Navbar -->
+  {% block header %}
+  <header class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ path('app_home') }}">
+        <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
+        <span>Bloom</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <nav class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if app.request.attributes.get('_route') == 'product_index' %}active{% endif %}" href="{{ path('product_index') }}">Manager</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  {% endblock %}
+
+  <!-- 🌺 Main Content -->
+  <main class="flex-fill container my-4">
+    {% block body %}{% endblock %}
+  </main>
+
+  <!-- 🌷 Footer -->
+  {% block footer %}
+  <footer class="text-light text-center py-3 mt-auto">
+    <div class="container">
+      <small>© {{ "now"|date("Y") }} Bloom Shop | All Rights Reserved 🌷</small>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <!-- 🌸 Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- 🌼 Smooth Page Transition -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.remove("fade-out");
+      const links = document.querySelectorAll("a:not([target]):not([href^='#']):not([href^='mailto:']):not([href^='tel:'])");
+      links.forEach(link => {
+        link.addEventListener("click", e => {
+          const href = link.getAttribute("href");
+          if (href && !href.startsWith("javascript:")) {
+            e.preventDefault();
+            document.body.classList.add("fade-out");
+            setTimeout(() => window.location.href = href, 150);
+          }
+        });
+      });
+    });
+  </script>
+
+  {% block javascripts %}{% endblock %}
 </body>
 </html>

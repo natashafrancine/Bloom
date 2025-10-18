@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Orders - BLOOM{% endblock %}
+
+{% block body %}
+<div class="text-center">
+    <h1>Manage Orders</h1>
+    <p class="fs-5 mt-3">
+        Track your recent flower purchases and order details below.  
+        Thank you for trusting BLOOM to brighten your moments 🌸
+    </p>
+</div>
+
+<div class="table-responsive mt-5">
+    <table class="table table-bordered table-hover align-middle shadow-sm bg-white">
+        <thead class="table-light">
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#1001</td>
+                <td>Oct 10, 2025</td>
+                <td>Birthday Bouquet</td>
+                <td><span class="badge bg-success">Delivered</span></td>
+                <td>₱1,299</td>
+                <td><button class="btn btn-outline-primary btn-sm">View</button></td>
+            </tr>
+            <tr>
+                <td>#1002</td>
+                <td>Oct 12, 2025</td>
+                <td>Anniversary Roses</td>
+                <td><span class="badge bg-warning text-dark">In Transit</span></td>
+                <td>₱1,799</td>
+                <td><button class="btn btn-outline-primary btn-sm">View</button></td>
+            </tr>
+            <tr>
+                <td>#1003</td>
+                <td>Oct 13, 2025</td>
+                <td>Thank You Bouquet</td>
+                <td><span class="badge bg-info text-dark">Processing</span></td>
+                <td>₱899</td>
+                <td><button class="btn btn-outline-primary btn-sm">View</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

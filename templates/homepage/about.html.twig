@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About Us - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h1 style="font-family: 'Bauhaus 93 Regular', sans-serif; color: #DB2777;">About BLOOM</h1>
+        <p class="fs-5 text-muted mt-3" style="font-family: 'Cascadia Code', monospace;">
+            Welcome to <strong>BLOOM</strong> — where flowers meet passion and artistry.<br>
+            Every petal tells a story, and we’re here to help you express your love, joy, and appreciation through our beautifully curated floral designs.
+        </p>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col-md-6 mb-4 text-center">
+            <img src="{{ asset('uploads/flower shop.jpg') }}"
+                 alt="Bloom Shop"
+                 class="about-image rounded-4 shadow-sm">
+        </div>
+        <div class="col-md-6">
+            <div>
+                <h3 style="font-family: 'Bauhaus 93 Regular', sans-serif; color: #DB2777;">Our Vision</h3>
+                <p class="text-muted fs-6 mb-4" style="font-family: 'Cascadia Code', monospace;">
+                    Bloom envisions becoming the most beloved flower shop in the community — a place where every bouquet tells a story of love, joy, and connection. 
+                    We aim to make fresh flowers accessible, memorable, and part of life’s everyday celebrations.
+                </p>
+
+                <h3 style="font-family: 'Bauhaus 93 Regular', sans-serif; color: #DB2777;">Our Mission</h3>
+                <p class="text-muted fs-6" style="font-family: 'Cascadia Code', monospace;">
+                    Bloom aims to provide beautifully arranged flowers, crafted with care and creativity. 
+                    We strive to bring happiness to customers through sustainable sourcing, excellent service, and timeless floral designs.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Cascadia Code', monospace;
+        background-color: #fff;
+        color: #374151;
+        
+         /* 🌸 Full-page background image */
+        background-image: url('{{ asset("uploads/pattern.png") }}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+    }
+
+    h1, h3 {
+        font-family: 'Bauhaus 93 Regular', sans-serif;
+        letter-spacing: 1px;
+    }
+
+    p {
+        line-height: 1.6;
+    }
+
+    /* ✅ Adjusted image size for neat layout */
+    .about-image {
+        width: 420px;
+        height: 320px;
+        object-fit: cover;
+        border-radius: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .row.align-items-center {
+            flex-direction: column-reverse;
+        }
+
+        .col-md-6 {
+            text-align: center;
+        }
+
+        .about-image {
+            width: 80%;
+            height: auto;
+        }
+    }
+</style>
+{% endblock %}

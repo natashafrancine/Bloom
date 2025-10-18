@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit {{ product.name }} - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="mb-4" style="font-family: 'Bauhaus93 Regular', cursive; color: #DB2777;">Edit Product</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-pink mt-3 px-4 py-2">💾 Save Changes</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('product_index') }}" class="btn btn-outline-secondary mt-3">⬅️ Back to List</a>
+</div>
+{% endblock %}
