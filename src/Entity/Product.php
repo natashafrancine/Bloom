@@ -29,8 +29,11 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\ManyToOne(inversedBy: 'Product')]
     private ?Category $category = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Product')]
+    private ?Shop $shop = null;
 
     // ────────────────────────────────
     // Getters and Setters
@@ -103,6 +106,18 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getShop(): ?Shop
+    {
+        return $this->shop;
+    }
+
+    public function setShop(?Shop $shop): static
+    {
+        $this->shop = $shop;
 
         return $this;
     }

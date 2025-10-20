@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ shop.name }} - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <!-- 🌸 Shop Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold mb-3" style="font-family: 'Bauhaus93 Regular', cursive; color: #DB2777;">
+            {{ shop.name }}
+        </h1>
+        <p class="text-muted fs-5">{{ shop.description ?: 'No description available.' }}</p>
+    </div>
+
+    <!-- 🛍️ Shop Info Card -->
+    <div class="card mb-5 border-0 shadow-sm rounded-4">
+        <div class="card-body text-center">
+            <h5 class="fw-semibold text-pink mb-2">Shop Details</h5>
+            <p><strong>ID:</strong> {{ shop.id }}</p>
+            <p><strong>Name:</strong> {{ shop.name }}</p>
+            <p><strong>Description:</strong> {{ shop.description }}</p>
+        </div>
+    </div>
+
+    <!-- 🐚 Products Section -->
+    <h2 class="fw-bold mb-4" style="font-family: 'Bauhaus93 Regular', cursive; color: #DB2777;">
+        🌺 Products Available
+    </h2>
+
+    {% if shop.products is not empty %}
+        <div class="row g-4">
+            {% for product in shop.products %}
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 rounded-4">
+                        {% if product.image %}
+                            <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="card-img-top rounded-top-4" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body text-center">
+                            <h5 class="fw-bold text-pink">{{ product.name }}</h5>
+                            <p class="text-muted small mb-1">{{ product.category ? product.category.name : 'Uncategorized' }}</p>
+                            <p class="fw-semibold mb-2">₱{{ product.price|number_format(2, '.', ',') }}</p>
+                            <a href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-outline-pink btn-sm px-3 py-2">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted fst-italic">No products available in this shop yet.</p>
+    {% endif %}
+
+    <!-- 🩷 Actions -->
+    <div class="mt-5 text-center">
+        <a href="{{ path('shop_index') }}" class="btn btn-outline-secondary px-4 py-2 me-2">⬅️ Back to List</a>
+        <a href="{{ path('shop_edit', {'id': shop.id}) }}" class="btn btn-outline-primary px-4 py-2 me-2">✏️ Edit Shop</a>
+        {{ include('shop/_delete_form.html.twig', { 'button_label': '🗑️ Delete Shop' }) }}
+    </div>
+
+</div>
+{% endblock %}

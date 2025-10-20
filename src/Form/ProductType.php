@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -19,6 +20,7 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // 🌸 Product name
             ->add('name', TextType::class, [
                 'label' => 'Product Name',
                 'attr' => [
@@ -26,6 +28,8 @@ class ProductType extends AbstractType
                     'class' => 'form-control',
                 ],
             ])
+
+            // 🌸 Description
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'attr' => [
@@ -34,6 +38,8 @@ class ProductType extends AbstractType
                     'class' => 'form-control',
                 ],
             ])
+
+            // 🌸 Price
             ->add('price', NumberType::class, [
                 'label' => 'Price (₱)',
                 'attr' => [
@@ -42,6 +48,8 @@ class ProductType extends AbstractType
                 ],
                 'scale' => 2,
             ])
+
+            // 🌸 Stock
             ->add('stock', NumberType::class, [
                 'label' => 'Stock Quantity',
                 'attr' => [
@@ -49,19 +57,32 @@ class ProductType extends AbstractType
                     'class' => 'form-control',
                 ],
             ])
+
+            // 🌸 Category dropdown
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'name',         // shows category names in dropdown
-                'placeholder' => 'Choose a category',
-                'required' => false,
+                'choice_label' => 'name',
+                'placeholder' => 'Select a category',
                 'label' => 'Category',
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'form-select',
                 ],
             ])
+
+            // 🌸 Shop checkbox (add product to shop)
+            ->add('shop', CheckboxType::class, [
+                'label'    => 'Add to Shop',
+                'required' => false,
+                'mapped'   => false, // handled manually in controller
+                'attr'     => [
+                    'class' => 'form-check-input',
+                ],
+            ])
+
+            // 🌸 Product image upload
             ->add('image', FileType::class, [
                 'label' => 'Product Image (JPG, PNG, GIF)',
-                'mapped' => false, // not linked directly to entity
+                'mapped' => false,
                 'required' => false,
                 'constraints' => [
                     new File([
@@ -71,12 +92,12 @@ class ProductType extends AbstractType
                             'image/png',
                             'image/gif',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, GIF)',
-                    ])
+                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, or GIF)',
+                    ]),
                 ],
                 'attr' => [
                     'class' => 'form-control',
-                    'onchange' => 'previewImage(event)', // optional JS preview
+                    'onchange' => 'previewImage(event)',
                 ],
             ]);
     }

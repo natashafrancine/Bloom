@@ -5,16 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}BLOOM{% endblock %}</title>
 
-  <!-- 🌸 Website Logo (Favicon) -->
   <link rel="icon" type="image/png" href="{{ asset('uploads/bloom 2.png') }}">
 
-  <!-- 🌷 Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- 🌺 Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-  <!-- 🌼 Custom Font: Bauhaus 93 -->
   <style>
     @font-face {
       font-family: 'Bauhaus 93 Regular';
@@ -30,119 +25,80 @@
       --bloom-header: #DB2777;
     }
 
-    /* 🌺 Navbar */
-    .navbar {
-      background: linear-gradient(135deg, var(--bloom-primary), var(--bloom-accent));
-      padding: 0.8rem 0.8rem;
-      border-bottom: 3px solid white;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    body {
+      font-family: 'Cascadia Code', monospace;
+      background-color: var(--bloom-bg);
     }
 
-    /* 🌸 Logo Image */
-    .logo-img {
-      height: 70px;
-      width: 70px;
+    /* 🌸 Sidebar */
+    .sidebar {
+      min-height: 100vh;
+      width: 250px;
+      background: linear-gradient(135deg, var(--bloom-primary), var(--bloom-accent));
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar .logo-img {
+      height: 150px;
+      width: 150px;
       object-fit: contain;
       transition: transform 0.3s ease;
     }
 
-    .logo-img:hover {
+    .sidebar .logo-img:hover {
       transform: rotate(5deg) scale(1.05);
     }
 
-    /* 🌺 Brand Text */
-    .navbar-brand span {
+    .sidebar .brand-text {
       font-family: 'Bauhaus 93 Regular', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: var(--bloom-header);
       letter-spacing: 2px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+      display: block;
+      margin-top: 0.5rem;
     }
 
-    .navbar-brand {
-      transition: transform 0.3s ease;
-    }
-
-    .navbar-brand:hover {
-      transform: scale(1.05);
-    }
-
-    /* 🌸 Nav Links (Smaller Buttons) */
-    .navbar .nav-link {
+    .sidebar .nav-link {
       font-family: 'Bauhaus 93 Regular', sans-serif;
-      font-size: 1.5rem;
-      color: var(--bloom-header) !important;
-      font-weight: normal;
-      transition: all 0.3s ease;
+      font-size: 1.3rem;
+      color: var(--bloom-header);
+      padding: 0.5rem 1rem;
       border-radius: 25px;
-      padding: 5px 12px;
-      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+      display: block;
+      transition: 0.2s ease;
     }
 
-    .navbar .nav-link:hover {
-      background-color: rgba(255, 255, 255, 0.5);
-      color: #b91c6c !important;
+    .sidebar .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      color: #b91c6c;
+      transform: scale(1.03);
+    }
+
+    .sidebar .nav-link.active {
+      background-color: #E8A2B0;
+      color: white;
+      box-shadow: 0 0 10px rgba(219, 39, 119, 0.8);
       transform: scale(1.05);
     }
 
-    /* 🌸 Active Page Highlight */
-    .navbar .nav-link.active {
-      background-color: #E8A2B0 !important;
-      color: white !important;
-      box-shadow: 0 0 10px rgba(219, 39, 119, 0.8);
-      transform: scale(1.08);
+    .main-content {
+      margin-left: 260px;
+      padding: 2rem;
     }
 
-    /* 🌼 Main Content */
     main {
       background-color: white;
       border-radius: 20px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      margin-top: 2rem;
       padding: 2rem;
-      animation: fadeIn 0.3s ease-in-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    h1, h2, h3 {
-      font-family: 'Bauhaus 93 Regular', sans-serif;
-      color: var(--bloom-header);
-      letter-spacing: 1.5px;
-    }
-
-    /* 🌷 Buttons */
-    .btn-primary {
-      background-color: var(--bloom-primary);
-      border: none;
-      transition: all 0.3s ease-in-out;
-      padding: 6px 18px;
-      font-size: 0.9rem;
-      border-radius: 8px;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--bloom-accent);
-      color: var(--bloom-dark);
-    }
-
-    .btn-outline-primary {
-      border-color: var(--bloom-primary);
-      color: var(--bloom-primary);
-      padding: 6px 18px;
-      font-size: 0.9rem;
-      border-radius: 8px;
-    }
-
-    .btn-outline-primary:hover {
-      background-color: var(--bloom-primary);
-      color: white;
-    }
-
-    /* 🌻 Footer */
     footer {
       background: linear-gradient(135deg, var(--bloom-accent), var(--bloom-primary));
       color: white;
@@ -155,15 +111,21 @@
     }
 
     @media (max-width: 768px) {
-      .navbar-brand span {
-        font-size: 2rem;
-      }
-      .navbar .nav-link {
-        font-size: 1rem;
-        padding: 4px 10px;
-      }
-      main {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+        text-align: center;
         padding: 1rem;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .sidebar .nav-link {
+        font-size: 1rem;
       }
     }
   </style>
@@ -173,71 +135,42 @@
 
 <body class="d-flex flex-column min-vh-100 fade-out">
 
-  <!-- 🌸 Navbar -->
+  <!-- 🌸 Sidebar Navigation -->
   {% block header %}
-  <header class="navbar navbar-expand-lg">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ path('app_home') }}">
+  <aside class="sidebar">
+    <div class="text-center">
+      <a href="{{ path('app_home') }}">
         <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
-        <span>Bloom</span>
+        <span class="brand-text">Admin Panel</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <nav class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if app.request.attributes.get('_route') == 'product_index' %}active{% endif %}" href="{{ path('product_index') }}">Manager</a>
-          </li>
-        </ul>
-      </nav>
     </div>
-  </header>
+    <nav class="mt-4">
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">🏠 Home</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">🌺 About</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">📞 Contact</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_shop_index' %}active{% endif %}" href="{{ path('app_shop_index') }}">🛍️ Shop</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'product_index' %}active{% endif %}" href="{{ path('product_index') }}">🧑‍💼 Manager</a>
+    </nav>
+  </aside>
   {% endblock %}
 
-  <!-- 🌺 Main Content -->
-  <main class="flex-fill container my-4">
-    {% block body %}{% endblock %}
-  </main>
+  <!-- 🌺 Main Content Area -->
+  <div class="main-content flex-fill">
+    <main>
+      {% block body %}{% endblock %}
+    </main>
 
-  <!-- 🌷 Footer -->
-  {% block footer %}
-  <footer class="text-light text-center py-3 mt-auto">
-    <div class="container">
-      <small>© {{ "now"|date("Y") }} Bloom Shop | All Rights Reserved 🌷</small>
-    </div>
-  </footer>
-  {% endblock %}
+    {% block footer %}
+    <footer class="text-light text-center py-3 mt-4 rounded-bottom">
+      <div class="container">
+        <small>© {{ "now"|date("Y") }} Bloom Shop | All Rights Reserved 🌷</small>
+      </div>
+    </footer>
+    {% endblock %}
+  </div>
 
-  <!-- 🌸 Bootstrap JS -->
+  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- 🌼 Smooth Page Transition -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.body.classList.remove("fade-out");
-      const links = document.querySelectorAll("a:not([target]):not([href^='#']):not([href^='mailto:']):not([href^='tel:'])");
-      links.forEach(link => {
-        link.addEventListener("click", e => {
-          const href = link.getAttribute("href");
-          if (href && !href.startsWith("javascript:")) {
-            e.preventDefault();
-            document.body.classList.add("fade-out");
-            setTimeout(() => window.location.href = href, 150);
-          }
-        });
-      });
-    });
-  </script>
 
   {% block javascripts %}{% endblock %}
 </body>

@@ -1,20 +1,170 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ShopController!{% endblock %}
+{% block title %}Shops - BLOOM{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container py-5">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- 🌸 Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="mb-3" style="font-family: 'Bauhaus 93 Regular', cursive; color: #DB2777;">
+            Our Shops
+        </h1>
+        <p class="text-muted fs-5" style="font-family: 'Cascadia Code', monospace;">
+            Discover our charming collection of blooms — explore, admire, and find your perfect floral treasure 🌸
+        </p>
+    </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/Nitro/.vscode/Bloom/bloom/bloom/src/Controller/ShopController.php</code></li>
-        <li>Your template at <code>C:/Users/Nitro/.vscode/Bloom/bloom/bloom/templates/shop/index.html.twig</code></li>
-    </ul>
+    {% if shops is empty %}
+        <div class="text-center py-5">
+            <p class="text-muted fs-5">No shops available at the moment 🌷</p>
+        </div>
+    {% else %}
+        {% for shop in shops %}
+            <div class="shop-section mb-5 p-4 bg-white shadow-sm rounded-4 border border-light">
+                
+                <!-- 🏪 Shop Title -->
+                <h2 class="text-center mb-2" style="color:#DB2777; font-weight:bold;">
+                    {{ shop.name }}
+                </h2>
+                
+                {% if shop.description %}
+                    <p class="text-center text-muted mb-4">{{ shop.description }}</p>
+                {% endif %}
+                
+                <!-- 🪷 Products Grid -->
+                {% if shop.products|length > 0 %}
+                    <div class="row g-4 justify-content-center">
+                        {% for product in shop.products %}
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-10">
+                                <div class="card product-card border-0 rounded-4 shadow-sm h-100 hover-card overflow-hidden">
+                                    <div class="position-relative">
+                                        {% if product.image %}
+                                            <img src="{{ asset('uploads/' ~ product.image) }}"
+                                                 alt="{{ product.name }}"
+                                                 class="img-fluid"
+                                                 style="height:220px; width:100%; object-fit:cover;">
+                                        {% else %}
+                                            <img src="{{ asset('uploads/no-image.png') }}"
+                                                 alt="No Image"
+                                                 class="img-fluid"
+                                                 style="height:220px; width:100%; object-fit:cover;">
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="card-body text-center p-4">
+                                        <h5 class="fw-bold text-pink mb-2">{{ product.name }}</h5>
+                                        <p class="text-muted mb-1 small">
+                                            {{ product.category ? product.category.name : 'Uncategorized' }}
+                                        </p>
+                                        <p class="small text-secondary mb-2">
+                                            {{ product.description|length > 70 ? product.description|slice(0,70) ~ '...' : product.description }}
+                                        </p>
+                                        <p class="fw-semibold text-dark mb-1">
+                                            ₱{{ product.price|number_format(2, '.', ',') }}
+                                        </p>
+                                        <p class="text-muted small mb-3">Stock: {{ product.stock }}</p>
+                                        <a href="{{ path('product_show', {'id': product.id}) }}"
+                                           class="btn btn-outline-pink rounded-pill px-4 py-2">
+                                           🌺 View Product
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted my-4">
+                        No products available in this shop yet 🌸
+                    </p>
+                {% endif %}
+                
+                <!-- 🌼 Shop Details Button -->
+                <div class="text-center mt-4">
+                    <a href="{{ path('shop_show', {'id': shop.id}) }}"
+                       class="btn btn-pink rounded-pill px-4 py-2">
+                       🏪 View Shop Details
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 </div>
+
+<style>
+    body {
+        font-family: 'Cascadia Code', monospace;
+        background-color: #FFF8FB;
+        background-image: url('{{ asset("uploads/pattern.png") }}');
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+
+    .text-pink { color: #DB2777; }
+
+    .shop-section {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .shop-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 18px rgba(219, 39, 119, 0.2);
+    }
+
+    .product-card {
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 18px rgba(219, 39, 119, 0.25);
+    }
+
+    .btn-outline-pink {
+        border: 2px solid #DB2777;
+        color: #DB2777;
+        font-weight: 600;
+        transition: 0.3s ease;
+    }
+
+    .btn-outline-pink:hover {
+        background-color: #DB2777;
+        color: white;
+        box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .btn-pink {
+        background-color: #DB2777;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        transition: 0.3s ease;
+    }
+
+    .btn-pink:hover {
+        background-color: #b91c6b;
+        box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+        transform: translateY(-2px);
+    }
+
+    h2 {
+        font-family: 'Bauhaus 93 Regular', cursive;
+    }
+
+    @media (max-width: 768px) {
+        .product-card img {
+            height: 180px;
+        }
+        .card-body h5 {
+            font-size: 1rem;
+        }
+        .shop-section {
+            padding: 2rem 1rem;
+        }
+    }
+</style>
 {% endblock %}

@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
+use App\Repository\ShopRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+#[ORM\Entity(repositoryClass: ShopRepository::class)]
+class Shop
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,13 +19,13 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     /**
-     * @var Collection<int, Product>
+     * @var Collection<int, product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'shop')]
     private Collection $Product;
 
     public function __construct()
@@ -55,7 +55,7 @@ class Category
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -63,7 +63,7 @@ class Category
     }
 
     /**
-     * @return Collection<int, Product>
+     * @return Collection<int, product>
      */
     public function getProduct(): Collection
     {
@@ -74,7 +74,7 @@ class Category
     {
         if (!$this->Product->contains($Product)) {
             $this->Product->add($Product);
-            $Product->setCategory($this);
+            $Product->setShop($this);
         }
 
         return $this;
@@ -84,8 +84,8 @@ class Category
     {
         if ($this->Product->removeElement($Product)) {
             // set the owning side to null (unless already changed)
-            if ($Product->getCategory() === $this) {
-                $Product->setCategory(null);
+            if ($Product->getShop() === $this) {
+                $Product->setShop(null);
             }
         }
 
