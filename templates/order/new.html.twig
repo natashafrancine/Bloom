@@ -59,6 +59,33 @@
                         </div>
 
                         <div class="row">
+                            <div class="col-12">
+                                <h5 class="mb-3">Order Items</h5>
+                                <div id="products-section" class="mb-4">
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-5">
+                                            <select class="form-control" id="productSelect">
+                                                <option value="">Select a product</option>
+                                                {% for product in products %}
+                                                    <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }} - ${{ product.price }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="number" class="form-control" id="quantityInput" placeholder="Quantity" min="1" value="1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="button" class="btn btn-outline-primary w-100" id="addProductBtn">Add Product</button>
+                                        </div>
+                                    </div>
+                                    <div id="orderItems" class="border rounded p-3 bg-light">
+                                        <p class="text-muted mb-2">No products added yet.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6">
                                 <h5 class="mb-3">Order Details</h5>
                                 <div class="mb-3">
@@ -126,6 +153,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const shippingCostInput = document.getElementById('shippingCost');
     const taxPercentageInput = document.getElementById('taxPercentage');
     const totalAmountInput = document.getElementById('totalAmount');
+    const productSelect = document.getElementById('productSelect');
+    const quantityInput = document.getElementById('quantityInput');
+    const addProductBtn = document.getElementById('addProductBtn');
+    const orderItemsContainer = document.getElementById('orderItems');
+
+    let orderItems = [];
+    let itemIndex = 0;
+
+    function calculateSubtotal() {
+        let subtotal = 0;
+        orderItems.forEach(item => {
+            subtotal += item.price * item.quantity;
+        });
+        subtotalInput.value = subtotal.toFixed(2);
+        calculateTotal();
+    }
 
     function calculateTotal() {
         const subtotal = parseFloat(subtotalInput.value) || 0;
@@ -138,12 +181,80 @@ document.addEventListener('DOMContentLoaded', function() {
         totalAmountInput.value = total.toFixed(2);
     }
 
-    subtotalInput.addEventListener('input', calculateTotal);
+    function updateOrderItemsDisplay() {
+        if (orderItems.length === 0) {
+            orderItemsContainer.innerHTML = '<p class="text-muted mb-2">No products added yet.</p>';
+            return;
+        }
+
+        let html = '<div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead><tbody>';
+
+        orderItems.forEach((item, index) => {
+            const total = (item.price * item.quantity).toFixed(2);
+            html += `<tr>
+                <td>${item.name}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>$${total}</td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(${index})">Remove</button></td>
+            </tr>`;
+        });
+
+        html += '</tbody></table></div>';
+
+        // Add hidden inputs for form submission
+        orderItems.forEach((item, index) => {
+            html += `<input type="hidden" name="productIds[]" value="${item.productId}">`;
+            html += `<input type="hidden" name="quantities[]" value="${item.quantity}">`;
+        });
+
+        orderItemsContainer.innerHTML = html;
+    }
+
+    window.removeItem = function(index) {
+        orderItems.splice(index, 1);
+        updateOrderItemsDisplay();
+        calculateSubtotal();
+    };
+
+    addProductBtn.addEventListener('click', function() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const productId = productSelect.value;
+        const productName = selectedOption.text.split(' - ')[0];
+        const price = parseFloat(selectedOption.getAttribute('data-price'));
+        const quantity = parseInt(quantityInput.value) || 1;
+
+        if (!productId) {
+            alert('Please select a product.');
+            return;
+        }
+
+        // Check if product already exists
+        const existingIndex = orderItems.findIndex(item => item.productId == productId);
+        if (existingIndex !== -1) {
+            orderItems[existingIndex].quantity += quantity;
+        } else {
+            orderItems.push({
+                productId: productId,
+                name: productName,
+                price: price,
+                quantity: quantity
+            });
+        }
+
+        updateOrderItemsDisplay();
+        calculateSubtotal();
+
+        // Reset form
+        productSelect.value = '';
+        quantityInput.value = '1';
+    });
+
     shippingCostInput.addEventListener('input', calculateTotal);
     taxPercentageInput.addEventListener('input', calculateTotal);
 
     // Initial calculation
-    calculateTotal();
+    calculateSubtotal();
 });
 </script>
 {% endblock %}

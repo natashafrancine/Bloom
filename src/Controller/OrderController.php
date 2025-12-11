@@ -64,7 +64,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/new', name: 'order_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, ProductRepository $productRepository): Response
     {
         if ($request->isMethod('POST')) {
             $subtotal = (float) $request->request->get('subtotal', 0);
@@ -89,6 +89,28 @@ class OrderController extends AbstractController
             $order->setStatus($request->request->get('status', 'pending'));
             $order->setPaymentStatus($request->request->get('paymentStatus', 'pending'));
 
+            // Handle order items
+            $productIds = $request->request->get('productIds', []);
+            $quantities = $request->request->get('quantities', []);
+
+            foreach ($productIds as $index => $productId) {
+                if (!empty($productId) && isset($quantities[$index]) && $quantities[$index] > 0) {
+                    $product = $productRepository->find($productId);
+                    if ($product) {
+                        $quantity = (int) $quantities[$index];
+                        $price = (float) $product->getPrice();
+
+                        $orderItem = new OrderItem();
+                        $orderItem->setProduct($product);
+                        $orderItem->setQuantity($quantity);
+                        $orderItem->setPrice(number_format($price, 2, '.', ''));
+
+                        $order->addOrderItem($orderItem);
+                        $em->persist($orderItem);
+                    }
+                }
+            }
+
             $em->persist($order);
             $em->flush();
 
@@ -96,7 +118,11 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order_index');
         }
 
-        return $this->render('order/new.html.twig');
+        $products = $productRepository->findAll();
+
+        return $this->render('order/new.html.twig', [
+            'products' => $products,
+        ]);
     }
 
     #[Route('/{id}/edit', name: 'order_edit', methods: ['GET', 'POST'])]
