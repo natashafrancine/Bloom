@@ -67,31 +67,33 @@ class OrderController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, ProductRepository $productRepository): Response
     {
         if ($request->isMethod('POST')) {
-            $subtotal = (float) $request->request->get('subtotal', 0);
-            $shippingCost = (float) $request->request->get('shippingCost', 0);
-            $taxPercentage = (float) $request->request->get('taxPercentage', 0);
+            $data = $request->request->all();
+
+            $subtotal = (float) ($data['subtotal'] ?? 0);
+            $shippingCost = (float) ($data['shippingCost'] ?? 0);
+            $taxPercentage = (float) ($data['taxPercentage'] ?? 0);
 
             $taxAmount = $subtotal * ($taxPercentage / 100);
             $totalAmount = $subtotal + $shippingCost + $taxAmount;
 
             $order = new \App\Entity\Order();
-            $order->setCustomerName($request->request->get('customerName'));
-            $order->setCustomerEmail($request->request->get('customerEmail'));
-            $order->setCustomerPhone($request->request->get('customerPhone'));
-            $order->setShippingAddress($request->request->get('shippingAddress'));
-            $order->setNotes($request->request->get('notes'));
-            $order->setShippingMethod($request->request->get('shippingMethod'));
-            $order->setPaymentMethod($request->request->get('paymentMethod'));
+            $order->setCustomerName($data['customerName'] ?? '');
+            $order->setCustomerEmail($data['customerEmail'] ?? '');
+            $order->setCustomerPhone($data['customerPhone'] ?? '');
+            $order->setShippingAddress($data['shippingAddress'] ?? '');
+            $order->setNotes($data['notes'] ?? '');
+            $order->setShippingMethod($data['shippingMethod'] ?? '');
+            $order->setPaymentMethod($data['paymentMethod'] ?? '');
             $order->setSubtotal(number_format($subtotal, 2, '.', ''));
             $order->setShippingCost(number_format($shippingCost, 2, '.', ''));
             $order->setTaxAmount(number_format($taxAmount, 2, '.', ''));
             $order->setTotalAmount(number_format($totalAmount, 2, '.', ''));
-            $order->setStatus($request->request->get('status', 'pending'));
-            $order->setPaymentStatus($request->request->get('paymentStatus', 'pending'));
+            $order->setStatus($data['status'] ?? 'pending');
+            $order->setPaymentStatus($data['paymentStatus'] ?? 'pending');
 
             // Handle order items
-            $productIds = $request->request->get('productIds', []);
-            $quantities = $request->request->get('quantities', []);
+            $productIds = $data['productIds'] ?? [];
+            $quantities = $data['quantities'] ?? [];
 
             foreach ($productIds as $index => $productId) {
                 if (!empty($productId) && isset($quantities[$index]) && $quantities[$index] > 0) {
