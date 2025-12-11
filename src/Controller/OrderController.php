@@ -11,10 +11,10 @@ use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Entity\OrderItem;
 
-#[Route('/order', name: 'order_index')]
+#[Route('/order')]
 class OrderController extends AbstractController
 {
-    #[Route('/', name: 'index', methods: ['GET'])]
+    #[Route('/', name: 'order_index', methods: ['GET'])]
     public function index(OrderRepository $orderRepository): Response
     {
         $orders = $orderRepository->findBy([], ['createdAt' => 'DESC']);
