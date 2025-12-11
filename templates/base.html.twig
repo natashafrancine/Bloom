@@ -159,7 +159,7 @@
       </a>
     </div>
     <nav class="mt-4">
-      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Dashboard Overview</a>
       {#
       <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">🌺 About</a>
       <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">📞 Contact</a>
@@ -169,6 +169,14 @@
       <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
       <a class="nav-link {% if app.request.attributes.get('_route') starts with 'activity_log' %}active{% endif %}" href="{{ path('activity_log_index') }}">Activity Logs</a>
     </nav>
+
+    {% if app.user %}
+    <div class="mt-4 pt-3 border-top border-white border-opacity-25">
+      <p class="mb-2 text-white-50 small">Logged in as:</p>
+      <p class="mb-3 text-white">{{ app.user.email }}</p>
+      <a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm w-100">Logout</a>
+    </div>
+    {% endif %}
   </aside>
   {% endblock %}
 
