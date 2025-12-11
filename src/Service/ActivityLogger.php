@@ -4,15 +4,18 @@ namespace App\Service;
 
 use App\Entity\ActivityLog;
 use App\Entity\User;
+use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityLogger
 {
     private EntityManagerInterface $em;
+    private ActivityLogRepository $activityLogRepository;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, ActivityLogRepository $activityLogRepository)
     {
         $this->em = $em;
+        $this->activityLogRepository = $activityLogRepository;
     }
 
     public function log(User $user, string $action, ?string $description = null): void
@@ -24,5 +27,16 @@ class ActivityLogger
 
         $this->em->persist($log);
         $this->em->flush();
+    }
+
+    public function getRecentLogs(int $limit = 10): array
+    {
+        return $this->activityLogRepository->createQueryBuilder('a')
+            ->leftJoin('a.user', 'u')
+            ->addSelect('u')
+            ->orderBy('a.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }
