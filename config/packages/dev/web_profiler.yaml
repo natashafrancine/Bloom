@@ -3,4 +3,4 @@ web_profiler:
 
 framework:
     profiler:
-        collect: false # prevents infinite collection in translation
+        collect: true

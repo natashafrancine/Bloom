@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BLOOM{% endblock %}</title>
+
+  <link rel="icon" type="image/png" href="{{ asset('uploads/bloom 2.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  {% block stylesheets %}
+  <style>
+    :root {
+      --pink: #DB2777;
+      --pink-hover: #F472B6;
+      --light-bg: #FFF8FB;
+      --text-color: #3d2a2a;
+    }
+
+    body {
+      font-family: 'Cascadia Code', monospace;
+      color: var(--text-color);
+      background-color: var(--light-bg);
+      background-image: url('{{ asset("uploads/pattern.png") }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-hover) 100%);
+      color: white;
+      padding: 30px 20px;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-content {
+      flex: 1;
+    }
+    .user-info {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+    }
+    .logo-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 30px;
+      border: 3px solid rgba(255,255,255,0.3);
+      transition: transform 0.3s;
+    }
+    .logo-img:hover {
+      transform: scale(1.05);
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 12px 20px;
+      margin: 8px 0;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      position: relative;
+      font-family: 'Cascadia Code', monospace;
+    }
+    .nav-link:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateX(5px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .nav-link.active {
+      background: rgba(255,255,255,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .nav-link.active::before {
+      content: '🌸';
+      position: absolute;
+      left: -25px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .main-content {
+      margin-left: 280px;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .fade-out {
+      animation: fadeIn 0.8s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    footer {
+      background: linear-gradient(135deg, var(--pink), var(--pink-hover));
+      margin-top: auto;
+      border-radius: 15px 15px 0 0;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+      color: white;
+    }
+
+    .text-pink {
+      color: var(--pink);
+    }
+
+    .btn-pink {
+      background-color: var(--pink);
+      border-color: var(--pink);
+      transition: all 0.3s ease;
+    }
+
+    .btn-pink:hover {
+      background-color: var(--pink-hover);
+      border-color: var(--pink-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Bauhaus 93 Regular', sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 20px;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+      .nav-link.active::before {
+        display: none;
+      }
+    }
+  </style>
+  {% endblock %}
+</head>
+
+<body class="d-flex flex-column min-vh-100 fade-out">
+
+  <!-- 🌸 Sidebar Navigation -->
+  {% block header %}
+  <aside class="sidebar">
+    <div class="sidebar-content">
+      <div class="text-center">
+        <a href="{{ path('app_home') }}">
+          <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
+          {# <span class="brand-text">Admin Panel</span> #}
+        </a>
+      </div>
+      <nav class="mt-4">
+        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Dashboard Overview</a>
+        {#
+        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">🌺 About</a>
+        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">📞 Contact</a>
+        #}
+        <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
+        <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
+        <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
+        <a class="nav-link {% if app.request.attributes.get('_route') starts with 'activity_log' %}active{% endif %}" href="{{ path('activity_log_index') }}">Activity Logs</a>
+      </nav>
+    </div>
+
+    {% if app.user %}
+    <div class="user-info">
+      <p class="mb-2 text-white-50 small">Logged in as:</p>
+      <p class="mb-3 text-white">{{ app.user.email }}</p>
+      <a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm w-100">Logout</a>
+    </div>
+    {% endif %}
+  </aside>
+  {% endblock %}
+
+  <!-- 🌺 Main Content Area -->
+  <div class="main-content flex-fill">
+    <main>
+      {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ message|raw }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+      {% block body %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="text-light text-center py-3 mt-4 rounded-bottom">
+      <div class="container">
+        <small>© {{ "now"|date("Y") }} Bloom Shop | All Rights Reserved 🌷</small>
+      </div>
+    </footer>
+    {% endblock %}
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  {% block javascripts %}{% endblock %}
+</body>
+</html>

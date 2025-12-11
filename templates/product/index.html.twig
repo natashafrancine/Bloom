@@ -4,19 +4,28 @@
 
 {% block header %}
 <aside class="sidebar">
-  <div class="text-center">
-    <a href="{{ path('app_home') }}">
-      <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
-    </a>
+  <div class="sidebar-content">
+    <div class="text-center">
+      <a href="{{ path('app_home') }}">
+        <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
+      </a>
+    </div>
+    <nav class="mt-4">
+        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Dashboard Overview</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
+      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
+        <a class="nav-link {% if app.request.attributes.get('_route') starts with 'activity_log' %}active{% endif %}" href="{{ path('activity_log_index') }}">Activity Logs</a>
+    </nav>
   </div>
-  <nav class="mt-4">
-      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Dashboard Overview</a>
-    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
-    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
-    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
-      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'activity_log' %}active{% endif %}" href="{{ path('activity_log_index') }}">Activity Logs</a>
-  </nav>
 
+  {% if app.user %}
+  <div class="user-info">
+    <p class="mb-2 text-white-50 small">Logged in as:</p>
+    <p class="mb-3 text-white">{{ app.user.email }}</p>
+    <a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm w-100">Logout</a>
+  </div>
+  {% endif %}
 </aside>
 {% endblock %}
 
