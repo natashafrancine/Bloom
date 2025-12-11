@@ -1,7 +1,5 @@
 twig:
     file_name_pattern: '*.twig'
-    globals:
-        activity_logger: '@App\Service\ActivityLogger'
 
 when@test:
     twig:

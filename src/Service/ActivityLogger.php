@@ -29,14 +29,4 @@ class ActivityLogger
         $this->em->flush();
     }
 
-    public function getRecentLogs(int $limit = 10): array
-    {
-        return $this->activityLogRepository->createQueryBuilder('a')
-            ->leftJoin('a.user', 'u')
-            ->addSelect('u')
-            ->orderBy('a.createdAt', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
 }
