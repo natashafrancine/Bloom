@@ -38,14 +38,17 @@ security:
                 #always_remember_me: true
 
     access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/, roles: [ROLE_ADMIN, ROLE_STAFF] }
 
 when@test:
     security:
         password_hashers:
             App\Entity\User:
                 algorithm: auto
-                cost: 4
-                time_cost: 3
-                memory_cost: 10
+            cost: 4
+            time_cost: 3
+            memory_cost: 10
