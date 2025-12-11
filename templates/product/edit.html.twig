@@ -18,23 +18,11 @@
         {{ form_start(form, {
             'action': path('product_edit', {'id': product.id}),
             'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'},
+            'multipart': true
         }) }}
 
-        {% for child in form %}
-            {% if child.vars.name == 'shop' %}
-                <div class="form-check mb-4">
-                    {{ form_widget(child, {'attr': {'class': 'form-check-input'}}) }}
-                    {{ form_label(child, 'Add to Shop', {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
-                    <div class="invalid-feedback">{{ form_errors(child) }}</div>
-                </div>
-            {% elseif child.vars.name != '_token' %}
-                <div class="mb-4">
-                    {{ form_label(child, null, {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(child, {'attr': {'class': 'form-control', 'required': true}}) }}
-                    <div class="invalid-feedback">{{ form_errors(child) }}</div>
-                </div>
-            {% endif %}
-        {% endfor %}
+        {# Use the shared form partial (passes `product` for image preview) #}
+        {{ include('product/_form.html.twig', { product: product }) }}
 
         <!-- Save Button -->
         <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
@@ -81,6 +69,20 @@ body {
 .form-control:focus {
     border-color: #DB2777;
     box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.15);
+}
+.is-invalid { 
+    border-color: #dc3545 !important;
+    background-color: #ffe6e6;
+}
+.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+.invalid-feedback {
+    display: block !important;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 .btn-pink {
     background-color: #DB2777;

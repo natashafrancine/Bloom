@@ -14,71 +14,16 @@
             </p>
         </div>
 
-        <!-- Flash messages -->
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }} alert-dismissible fade show rounded-3" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
-
         {{ form_start(form, {
             'attr': {
                 'class': 'needs-validation',
-                'novalidate': 'novalidate',
-                'enctype': 'multipart/form-data'
-            }
+                'novalidate': 'novalidate'
+            },
+            'multipart': true
         }) }}
 
-        <!-- Product Name -->
-        <div class="mb-4">
-            {{ form_label(form.name, 'Product Name', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Elegant Rose Bouquet', 'required': true}}) }}
-            <div class="invalid-feedback">{{ form_errors(form.name) }}</div>
-        </div>
-
-        <!-- Description -->
-        <div class="mb-4">
-            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Write a short description...', 'required': true}}) }}
-            <div class="invalid-feedback">{{ form_errors(form.description) }}</div>
-        </div>
-
-        <!-- Price & Stock -->
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3 mb-md-0">
-                {{ form_label(form.price, 'Price (₱)', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '0.00', 'required': true}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.price) }}</div>
-            </div>
-            <div class="col-md-6">
-                {{ form_label(form.stock, 'Stock Quantity', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': '50', 'required': true}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.stock) }}</div>
-            </div>
-        </div>
-
-        <!-- Product Image -->
-        {% if form.image is defined %}
-            <div class="mb-4">
-                {{ form_label(form.image, 'Product Image', {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(form.image, {'attr': {'class': 'form-control', 'onchange': 'previewImage(event)'}}) }}
-                <div class="invalid-feedback">{{ form_errors(form.image) }}</div>
-
-                <div class="text-center mt-3" id="imagePreviewContainer" style="display: none;">
-                    <img id="imagePreview" src="#" alt="Image Preview" class="img-fluid rounded-4 shadow-sm" style="max-height: 250px; object-fit: cover;">
-                </div>
-            </div>
-        {% endif %}
-
-        <!-- Shop Checkbox -->
-        <div class="form-check mb-4">
-            {{ form_widget(form.shop, {'attr': {'class': 'form-check-input'}}) }}
-            {{ form_label(form.shop, 'Add to Shop', {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
-            <div class="invalid-feedback">{{ form_errors(form.shop) }}</div>
-        </div>
+        {# Include shared product form fields and scripts #}
+        {{ include('product/_form.html.twig') }}
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-center gap-3 mt-4">
@@ -89,40 +34,6 @@
         {{ form_end(form) }}
     </div>
 </div>
-
-<!-- Scripts -->
-<script>
-function previewImage(event) {
-    const input = event.target;
-    const preview = document.getElementById('imagePreview');
-    const container = document.getElementById('imagePreviewContainer');
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            preview.src = e.target.result;
-            container.style.display = 'block';
-        };
-        reader.readAsDataURL(input.files[0]);
-    } else {
-        preview.src = '#';
-        container.style.display = 'none';
-    }
-}
-
-(() => {
-    'use strict';
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
-    });
-})();
-</script>
 
 <!-- Styles -->
 <style>
@@ -147,6 +58,20 @@ body {
 .form-control:focus {
     border-color: #DB2777;
     box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.15);
+}
+.is-invalid { 
+    border-color: #dc3545 !important;
+    background-color: #ffe6e6;
+}
+.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+.invalid-feedback {
+    display: block !important;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 .btn-pink {
     background-color: #DB2777;

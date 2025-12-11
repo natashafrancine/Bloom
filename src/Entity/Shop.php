@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ShopRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,19 +17,11 @@ class Shop
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, product>
-     */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'shop')]
-    private Collection $Product;
-
-    public function __construct()
-    {
-        $this->Product = new ArrayCollection();
-    }
+    #[ORM\OneToOne(targetEntity: Product::class, mappedBy: 'shop', cascade: ['persist', 'remove'])]
+    private ?Product $product = null;
 
     public function getId(): ?int
     {
@@ -46,7 +36,6 @@ class Shop
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -55,39 +44,25 @@ class Shop
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, product>
-     */
-    public function getProduct(): Collection
+    public function getProduct(): ?Product
     {
-        return $this->Product;
+        return $this->product;
     }
 
-    public function addProduct(Product $Product): static
+    public function setProduct(?Product $product): static
     {
-        if (!$this->Product->contains($Product)) {
-            $this->Product->add($Product);
-            $Product->setShop($this);
+        // set the owning side of the relation if necessary
+        if ($product !== null && $product->getShop() !== $this) {
+            $product->setShop($this);
         }
 
-        return $this;
-    }
-
-    public function removeProduct(Product $Product): static
-    {
-        if ($this->Product->removeElement($Product)) {
-            // set the owning side to null (unless already changed)
-            if ($Product->getShop() === $this) {
-                $Product->setShop(null);
-            }
-        }
+        $this->product = $product;
 
         return $this;
     }

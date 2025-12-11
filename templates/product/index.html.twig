@@ -13,7 +13,7 @@
     </a>
 </div>
 
-<!-- ✅ Flash Messages -->
+<!-- Flash Messages -->
 {% for message in app.flashes('success') %}
     <div class="alert alert-success alert-dismissible fade show text-center mb-4" role="alert">
         {{ message }}
@@ -22,7 +22,8 @@
 {% endfor %}
 
 <div class="table-responsive">
-    <!-- 🌸 Category Filter Buttons -->
+
+    <!-- Category Filter Buttons -->
     <div class="mb-4 d-flex flex-wrap gap-2 justify-content-center">
         <a href="{{ path('product_index') }}"
            class="btn btn-sm btn-outline-secondary {{ currentCategory is null ? 'active' : '' }}">
@@ -36,12 +37,12 @@
         {% endfor %}
     </div>
 
-    <!-- 🌼 Product Table -->
     {% if products is empty %}
         <div class="text-center py-5">
             <p class="text-muted fs-5">No products yet — start adding your lovely blooms 🌷</p>
         </div>
     {% else %}
+        <!-- PRODUCT TABLE -->
         <table id="productTable" class="table table-bordered table-hover align-middle shadow-sm bg-white rounded-4 overflow-hidden">
             <thead class="table-light">
                 <tr>
@@ -56,65 +57,91 @@
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for p in products %}
-                    <tr>
-                        <td>{{ p.id }}</td>
-                        <td>
-                            {% if p.image %}
-                                <img src="{{ asset('uploads/' ~ p.image) }}" alt="{{ p.name }}" class="product-thumb shadow-sm">
-                            {% else %}
-                                <span class="text-muted fst-italic small">No image</span>
-                            {% endif %}
-                        </td>
-                        <td class="fw-semibold">{{ p.name }}</td>
-                        <td class="text-muted small">
-                            {% if p.shop %}
-                                Added
-                            {% else %}
-                                —
-                            {% endif %}
-                        </td>
-                        <td class="text-muted small">
-                            {{ p.category ? p.category.name : '—' }}
-                        </td>
-                        <td class="text-muted small">
-                            {{ p.description|length > 80 ? p.description|slice(0, 80) ~ '...' : p.description }}
-                        </td>
-                        <td class="fw-semibold">₱{{ p.price|number_format(2, '.', ',') }}</td>
-                        <td>{{ p.stock }}</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ path('product_show', {'id': p.id}) }}" class="btn btn-outline-primary btn-sm">👁️ View</a>
-                                <a href="{{ path('product_edit', {'id': p.id}) }}" class="btn btn-outline-secondary btn-sm">✏️ Edit</a>
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ p.id }}</td>
+
+                    <td>
+                        {% if p.image %}
+                            <img src="{{ asset('uploads/' ~ p.image) }}" alt="{{ p.name }}" class="product-thumb shadow-sm">
+                        {% else %}
+                            <span class="text-muted fst-italic small">No image</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="fw-semibold">{{ p.name }}</td>
+
+                    <!-- TOGGLE SHOP -->
+                    <td class="text-center">
+                        <label class="switch">
+                            <input type="checkbox" class="toggle-shop" data-id="{{ p.id }}" {% if p.shop %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+
+                    <td class="text-muted small">{{ p.category ? p.category.name : '—' }}</td>
+
+                    <td class="text-muted small">
+                        {{ p.description|length > 80 ? p.description|slice(0, 80) ~ '...' : p.description }}
+                    </td>
+
+                    <td class="fw-semibold">₱{{ p.price|number_format(2, '.', ',') }}</td>
+
+                    <td>{{ p.stock }}</td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{{ path('product_show', {'id': p.id}) }}" class="btn btn-outline-primary btn-sm">👁️ View</a>
+                            <a href="{{ path('product_edit', {'id': p.id}) }}" class="btn btn-outline-secondary btn-sm">✏️ Edit</a>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
 </div>
 
-<!-- 🌺 DataTables -->
+<!-- DATATABLES -->
 <link rel="stylesheet" href="//cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="//cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+
 <script>
-    $(document).ready(function() {
-        $('#productTable').DataTable({
-            pageLength: 5,
-            lengthMenu: [5, 10, 20, 50],
-            language: {
-                search: "🔍 Search:",
-                lengthMenu: "Show _MENU_ entries",
-                zeroRecords: "No matching product found",
-                info: "Showing _START_ to _END_ of _TOTAL_ products",
-                infoEmpty: "No products available",
-                infoFiltered: "(filtered from _MAX_ total products)"
-            }
-        });
+$(document).ready(function() {
+    $('#productTable').DataTable({
+        pageLength: 5,
+        lengthMenu: [5, 10, 20, 50],
+        language: {
+            search: "🔍 Search:",
+            lengthMenu: "Show _MENU_ entries",
+            zeroRecords: "No matching product found",
+            info: "Showing _START_ to _END_ of _TOTAL_ products",
+            infoEmpty: "No products available",
+            infoFiltered: "(filtered from _MAX_ total products)"
+        }
     });
+});
+
+/* AJAX TOGGLE SHOP */
+$(document).on('change', '.toggle-shop', function () {
+    let productId = $(this).data('id');
+    let newStatus = $(this).is(':checked') ? 1 : 0;
+
+    $.ajax({
+        url: "{{ path('product_toggle_shop') }}",
+        method: "POST",
+        data: { id: productId, shop: newStatus },
+        success: function () {
+            console.log("Shop status updated");
+        },
+        error: function () {
+            alert("Error updating shop status");
+        }
+    });
+});
 </script>
 
 <style>
@@ -126,6 +153,7 @@ body {
     background-attachment: fixed;
 }
 
+/* Product Thumb */
 .product-thumb {
     width: 70px;
     height: 70px;
@@ -134,21 +162,63 @@ body {
     border: 2px solid #F9C5D1;
 }
 
+/* Pink Button */
 .btn-pink {
     background-color: #DB2777;
     border-radius: 25px;
-    font-family: 'Bauhaus 93 Regular', cursive;
     color: white;
     font-weight: 600;
 }
+.btn-pink:hover { background-color: #BE185D; }
 
-.btn-pink:hover {
-    background-color: #BE185D;
-}
-
+/* Row Hover */
 .table-hover tbody tr:hover {
     background-color: #FFF0F6 !important;
-    transition: 0.3s ease;
+}
+
+/* TOGGLE SWITCH */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: #DB2777;
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+.slider.round {
+    border-radius: 34px;
 }
 </style>
+
 {% endblock %}

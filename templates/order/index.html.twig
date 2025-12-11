@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">📋 My Orders</h1>
+        <p class="text-muted">View and manage all your orders</p>
+    </div>
+
+    {% if orders is empty %}
+        <div class="alert alert-info text-center py-5" role="alert">
+            <h5 class="fw-bold">No orders yet</h5>
+            <p class="mb-3">You haven't placed any orders yet. Start shopping to create your first order!</p>
+            <a href="{{ path('app_shop_index') }}" class="btn btn-pink px-4">🛍️ Start Shopping</a>
+        </div>
+    {% else %}
+        <div class="row">
+            {% for order in orders %}
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light border-bottom">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="mb-0 fw-bold">Order #{{ order.id }}</h6>
+                                    <small class="text-muted">{{ order.createdAt|date('M d, Y h:i A') }}</small>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="badge bg-success">{{ order.status|upper }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <p class="mb-1"><strong>Items:</strong> {{ order.orderItems|length }}</p>
+                                <p class="mb-1"><strong>Total Amount:</strong> <span class="text-pink fw-bold">₱{{ order.totalAmount|number_format(2, '.', ',') }}</span></p>
+                                <p class="mb-0"><strong>Status:</strong> 
+                                    {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elseif order.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elseif order.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    {% elseif order.status == 'shipped' %}
+                                        <span class="badge bg-info">Shipped</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <a href="{{ path('order_show', {'id': order.id}) }}" class="btn btn-sm btn-pink text-white">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    body {
+        background-color: #FAFAFA;
+        font-family: 'Poppins', sans-serif;
+        color: #374151;
+    }
+    
+    .text-pink {
+        color: #DB2777;
+    }
+    
+    .btn-pink {
+        background-color: #DB2777;
+        border-color: #DB2777;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-pink:hover {
+        background-color: #b8214d;
+        border-color: #b8214d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+    }
+    
+    .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+    }
+</style>
+{% endblock %}

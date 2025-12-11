@@ -1,72 +1,207 @@
-<?php
+{# Product Form Partial #}
+{# This partial is used by new.html.twig and edit.html.twig to render all product form fields #}
+{# It includes validation, error display, image preview, and client-side form handling #}
 
-namespace App\Form;
+{# Product Name #}
+<div class="mb-3">
+    {{ form_label(form.name, 'Product Name *', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'e.g., Elegant Rose Bouquet', 'required': 'required'}}) }}
+    {% if form_errors(form.name) %}
+        <div class="text-danger small mt-1">{{ form_errors(form.name) }}</div>
+    {% endif %}
+</div>
 
-use App\Entity\Product;
-use App\Entity\Category;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
+{# Description #}
+<div class="mb-3">
+    {{ form_label(form.description, 'Description *', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your product in detail...', 'required': 'required'}}) }}
+    {% if form_errors(form.description) %}
+        <div class="text-danger small mt-1">{{ form_errors(form.description) }}</div>
+    {% endif %}
+</div>
 
-class ProductType extends AbstractType
-{
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add('name', TextType::class, [
-                'label' => 'Product Name',
-                'attr' => ['placeholder' => 'Enter product name', 'class' => 'form-control'],
-            ])
-            ->add('description', TextareaType::class, [
-                'label' => 'Description',
-                'attr' => ['placeholder' => 'Enter product description', 'rows' => 4, 'class' => 'form-control'],
-            ])
-            ->add('price', MoneyType::class, [
-                'label' => 'Price (₱)',
-                'currency' => 'PHP',
-                'scale' => 2,
-                'attr' => ['placeholder' => '0.00', 'class' => 'form-control'],
-            ])
-            ->add('stock', IntegerType::class, [
-                'label' => 'Stock Quantity',
-                'attr' => ['placeholder' => 'e.g., 50', 'class' => 'form-control'],
-            ])
-            ->add('category', EntityType::class, [
-                'class' => Category::class,
-                'choice_label' => 'name',             // shows category names in dropdown
-                'placeholder' => 'Select a category', // default empty option
-                'multiple' => false,                   // single select
-                'expanded' => false,                   // dropdown
-                'required' => true,
-                'label' => 'Category',
-                'attr' => ['class' => 'form-control'],
-            ])
-            ->add('image', FileType::class, [
-                'label' => 'Product Image (JPG, PNG, GIF)',
-                'mapped' => false, // not linked directly to entity
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '5M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
-                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, GIF)',
-                    ])
-                ],
-                'attr' => ['class' => 'form-control', 'accept' => 'image/*'],
-            ]);
+{# Price & Stock #}
+<div class="row g-3 mb-3">
+    {# Price #}
+    <div class="col-md-6">
+        {{ form_label(form.price, 'Price (₱) *', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '0.00', 'id': 'price', 'required': 'required'}}) }}
+        {% if form_errors(form.price) %}
+            <div class="text-danger small mt-1">{{ form_errors(form.price) }}</div>
+        {% endif %}
+    </div>
+
+    {# Stock Quantity #}
+    <div class="col-md-6">
+        {{ form_label(form.stock, 'Stock Quantity *', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': '50', 'id': 'stock', 'required': 'required'}}) }}
+        {% if form_errors(form.stock) %}
+            <div class="text-danger small mt-1">{{ form_errors(form.stock) }}</div>
+        {% endif %}
+    </div>
+</div>
+
+{# Category #}
+<div class="mb-3">
+    {{ form_label(form.category, 'Product Category *', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.category, {'attr': {'class': 'form-select', 'required': 'required'}}) }}
+    {% if form_errors(form.category) %}
+        <div class="text-danger small mt-1">{{ form_errors(form.category) }}</div>
+    {% endif %}
+</div>
+
+{# Image Upload #}
+{% if form.image is defined %}
+    <div class="mb-3">
+        {{ form_label(form.image, 'Product Image', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.image, {'attr': {'class': 'form-control', 'onchange': 'previewImage(event)', 'accept': 'image/*'}}) }}
+        <small class="text-muted d-block mt-1">Supported: JPG, PNG, GIF (Max 5MB)</small>
+        {% if form_errors(form.image) %}
+            <div class="text-danger small mt-1">{{ form_errors(form.image) }}</div>
+        {% endif %}
+    </div>
+
+    {# Image Preview #}
+    <div class="mb-3 text-center" id="imagePreviewContainer" style="display: {% if product is defined and product.image %}block{% else %}none{% endif %};">
+        <img id="imagePreview"
+             src="{{ product is defined and product.image ? asset('uploads/' ~ product.image) : '#' }}"
+             alt="Image Preview"
+             class="img-fluid rounded-3 shadow-sm"
+             style="max-height: 250px; object-fit: cover;">
+    </div>
+
+    {# Add to Shop Checkbox #}
+<div class="form-check mb-3">
+    <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="addToShop"
+        name="addToShop"
+    >
+    <label class="form-check-label" for="addToShop">
+        Add this product to the shop
+    </label>
+</div>
+{% endif %}
+
+{# Render any remaining unrendered fields (e.g., _token) to prevent auto-rendering conflicts #}
+{{ form_rest(form) }}
+
+<!-- Styling for Product Form -->
+<style>
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.4rem;
+        font-size: 0.95rem;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => Product::class,
-        ]);
+    .form-control,
+    .form-select {
+        border-radius: 8px;
+        border: 1px solid #E5E7EB;
+        padding: 0.6rem 0.875rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #DB2777;
+        box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.15);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        background-color: #ffe6e6;
+    }
+
+    .form-control.is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 1px solid #E5E7EB;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .form-check-input:checked {
+        background-color: #DB2777;
+        border-color: #DB2777;
+    }
+
+    .form-check-input:focus {
+        border-color: #DB2777;
+        box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.25);
+    }
+
+    .form-check-label {
+        margin-left: 0.5rem;
+        cursor: pointer;
+        color: #333;
+        font-weight: 500;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-muted {
+        color: #6B7280 !important;
+        font-size: 0.875rem;
+    }
+
+    #imagePreviewContainer {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+{# Shared scripts for image preview and validation #}
+<script>
+function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('imagePreview');
+    const container = document.getElementById('imagePreviewContainer');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            if (preview) preview.src = e.target.result;
+            if (container) container.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        if (preview) preview.src = '#';
+        if (container) container.style.display = 'none';
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const priceInput = document.getElementById('price');
+
+    if (priceInput) {
+        priceInput.addEventListener('input', () => {
+            // Real-time validation feedback can be added here if needed
+        });
+    }
+});
+</script>

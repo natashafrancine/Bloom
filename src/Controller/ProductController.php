@@ -36,21 +36,21 @@ class ProductController extends AbstractController
         $categoryId = $request->query->get('category');
         $currentCategory = $categoryId ? $categoryRepository->find($categoryId) : null;
 
-        $product = $currentCategory
+        $products = $currentCategory
             ? $productRepository->findBy(['category' => $currentCategory])
             : $productRepository->findAll();
 
         $categories = $categoryRepository->findAll();
 
         return $this->render('product/index.html.twig', [
-            'products' => $product,
+            'products' => $products,
             'categories' => $categories,
             'currentCategory' => $currentCategory,
         ]);
     }
 
     /**
-     * 🌸 Add new product (with optional shop assignment)
+     * 🌸 Add new product
      */
     #[Route('/new', name: 'product_new', methods: ['GET', 'POST'])]
     public function new(
@@ -63,21 +63,17 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle image upload
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $newFilename = $this->fileUploader->upload($imageFile);
-                $product->setImage($newFilename);
+                $product->setImage($this->fileUploader->upload($imageFile));
             }
 
-            // Add to shop if checkbox is checked
-            $addToShop = $form->has('shop') ? $form->get('shop')->getData() : false;
+            $addToShop = $form->has('addToShop') ? $form->get('addToShop')->getData() : false;
+            $product->setAddToShop($addToShop);
+
             if ($addToShop) {
-                $shop = $shopRepository->findOneBy([]); // Fetch the first shop or adjust logic as needed
-                if ($shop) {
-                    $product->setShop($shop);
-                    $shop->addProduct($product);
-                }
+                $shop = $shopRepository->findOneBy([]);
+                if ($shop) $product->setShop($shop);
             }
 
             $em->persist($product);
@@ -93,18 +89,16 @@ class ProductController extends AbstractController
     }
 
     /**
-     * 🌸 Show a single product
+     * 🌸 Show product
      */
     #[Route('/{id}', name: 'product_show', methods: ['GET'])]
     public function show(Product $product): Response
     {
-        return $this->render('product/show.html.twig', [
-            'product' => $product,
-        ]);
+        return $this->render('product/show.html.twig', ['product' => $product]);
     }
 
     /**
-     * 🌸 Edit existing product (update shop assignment)
+     * 🌸 Edit product
      */
     #[Route('/{id}/edit', name: 'product_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -117,21 +111,15 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle image upload
             $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $newFilename = $this->fileUploader->upload($imageFile);
-                $product->setImage($newFilename);
-            }
+            if ($imageFile) $product->setImage($this->fileUploader->upload($imageFile));
 
-            // Update shop assignment
-            $addToShop = $form->has('shop') ? $form->get('shop')->getData() : false;
+            $addToShop = $form->has('addToShop') ? $form->get('addToShop')->getData() : false;
+            $product->setAddToShop($addToShop);
+
             if ($addToShop) {
                 $shop = $shopRepository->findOneBy([]);
-                if ($shop) {
-                    $product->setShop($shop);
-                    $shop->addProduct($product);
-                }
+                if ($shop) $product->setShop($shop);
             } else {
                 $product->setShop(null);
             }
@@ -155,8 +143,35 @@ class ProductController extends AbstractController
     {
         $em->remove($product);
         $em->flush();
-
         $this->addFlash('success', '🗑️ Product deleted successfully!');
         return $this->redirectToRoute('product_index');
+    }
+
+    /**
+     * 🌸 AJAX Toggle Add/Remove Product From Shop
+     */
+    #[Route('/toggle-shop', name: 'product_toggle_shop', methods: ['POST'])]
+    public function toggleShop(
+        Request $request,
+        ProductRepository $productRepo,
+        ShopRepository $shopRepo,
+        EntityManagerInterface $em
+    ): Response {
+        $product = $productRepo->find($request->request->get('id'));
+
+        if (!$product) return new Response('Product not found', 404);
+
+        $status = (bool) $request->request->get('shop');
+        $product->setAddToShop($status);
+
+        if ($status) {
+            $shop = $shopRepo->findOneBy([]);
+            if ($shop) $product->setShop($shop);
+        } else {
+            $product->setShop(null);
+        }
+
+        $em->flush();
+        return new Response('OK');
     }
 }

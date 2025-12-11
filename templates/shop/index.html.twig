@@ -3,87 +3,107 @@
 {% block title %}Shops - BLOOM{% endblock %}
 
 {% block body %}
-<div class="container py-5">
+<div class="container mx-auto py-10 px-4">
 
     <!-- 🌸 Page Header -->
-    <div class="text-center mb-5">
-        <h1 class="mb-3" style="font-family: 'Bauhaus 93 Regular', cursive; color: #DB2777;">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-pink-600 mb-2" style="font-family: 'Bauhaus 93 Regular', cursive;">
             Our Shops
         </h1>
-        <p class="text-muted fs-5" style="font-family: 'Cascadia Code', monospace;">
+        <p class="text-gray-600 text-lg" style="font-family: 'Cascadia Code', monospace;">
             Discover our charming collection of blooms — explore, admire, and find your perfect floral treasure 🌸
         </p>
     </div>
 
     {% if shops is empty %}
-        <div class="text-center py-5">
-            <p class="text-muted fs-5">No shops available at the moment 🌷</p>
+        <div class="text-center py-10">
+            <p class="text-gray-500 text-lg">No shops available at the moment 🌷</p>
         </div>
     {% else %}
         {% for shop in shops %}
-            <div class="shop-section mb-5 p-4 bg-white shadow-sm rounded-4 border border-light">
+            <div class="mb-10 p-6 bg-white shadow-md rounded-xl border border-gray-100">
                 
                 <!-- 🏪 Shop Title -->
-                <h2 class="text-center mb-2" style="color:#DB2777; font-weight:bold;">
+                <h2 class="text-2xl font-extrabold text-pink-600 text-center mb-4">
                     {{ shop.name }}
                 </h2>
-                
                 {% if shop.description %}
-                    <p class="text-center text-muted mb-4">{{ shop.description }}</p>
+                    <p class="text-center text-gray-500 mb-6">{{ shop.description }}</p>
                 {% endif %}
-                
-                <!-- 🪷 Products Grid -->
-                {% if shop.products|length > 0 %}
-                    <div class="row g-4 justify-content-center">
-                        {% for product in shop.products %}
-                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-10">
-                                <div class="card product-card border-0 rounded-4 shadow-sm h-100 hover-card overflow-hidden">
-                                    <div class="position-relative">
-                                        {% if product.image %}
-                                            <img src="{{ asset('uploads/' ~ product.image) }}"
-                                                 alt="{{ product.name }}"
-                                                 class="img-fluid"
-                                                 style="height:220px; width:100%; object-fit:cover;">
-                                        {% else %}
-                                            <img src="{{ asset('uploads/no-image.png') }}"
-                                                 alt="No Image"
-                                                 class="img-fluid"
-                                                 style="height:220px; width:100%; object-fit:cover;">
-                                        {% endif %}
+
+                <!-- 🪷 Product Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {% if shop.product %}
+                        {% set product = shop.product %}
+                        <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
+                            <!-- Product Image -->
+                            <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
+                                {% if product.image %}
+                                    <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ asset('uploads/no-image.png') }}" alt="No Image" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="flex-1 flex flex-col justify-between">
+                                <div class="mb-2">
+                                    <h5 class="text-lg font-bold text-pink-600 mb-1">{{ product.name }}</h5>
+                                    <p class="text-sm text-gray-500 mb-1">{{ product.category ? product.category.name : 'Uncategorized' }}</p>
+                                    <p class="text-sm text-gray-600 mb-2">{{ product.description|length > 70 ? product.description|slice(0,70) ~ '...' : product.description }}</p>
+                                    <p class="font-semibold text-gray-800 mb-1">₱{{ product.price|number_format(2, '.', ',') }}</p>
+                                    <p class="text-xs text-gray-400 mb-2">Stock: {{ product.stock }}</p>
+                                </div>
+
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="decrementQty({{ product.id }})">-</button>
+                                        <input type="number" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.stock }}" class="w-12 text-center border rounded" />
+                                        <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="incrementQty({{ product.id }})">+</button>
                                     </div>
-                                    
-                                    <div class="card-body text-center p-4">
-                                        <h5 class="fw-bold text-pink mb-2">{{ product.name }}</h5>
-                                        <p class="text-muted mb-1 small">
-                                            {{ product.category ? product.category.name : 'Uncategorized' }}
-                                        </p>
-                                        <p class="small text-secondary mb-2">
-                                            {{ product.description|length > 70 ? product.description|slice(0,70) ~ '...' : product.description }}
-                                        </p>
-                                        <p class="fw-semibold text-dark mb-1">
-                                            ₱{{ product.price|number_format(2, '.', ',') }}
-                                        </p>
-                                        <p class="text-muted small mb-3">Stock: {{ product.stock }}</p>
-                                        <a href="{{ path('product_show', {'id': product.id}) }}"
-                                           class="btn btn-outline-pink rounded-pill px-4 py-2">
-                                           🌺 View Product
-                                        </a>
+                                    <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition" onclick="addToCart({{ product.id }})">
+                                        🛒 Add to Cart
+                                    </button>
+                                    <a href="{{ path('product_show', {'id': product.id}) }}" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Sample Flower Bouquets -->
+                        {% for i in 1..4 %}
+                            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
+                                <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
+                                    <img src="{{ asset('uploads/sample-bouquet' ~ i ~ '.jpg') }}" alt="Sample Bouquet {{ i }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1 flex flex-col justify-between">
+                                    <div class="mb-2">
+                                        <h5 class="text-lg font-bold text-pink-600 mb-1">Sample Bouquet {{ i }}</h5>
+                                        <p class="text-sm text-gray-500 mb-1">Bouquet</p>
+                                        <p class="text-sm text-gray-600 mb-2">A beautiful floral arrangement perfect for gifting and decorating your home.</p>
+                                        <p class="font-semibold text-gray-800 mb-1">₱1,500.00</p>
+                                        <p class="text-xs text-gray-400 mb-2">Stock: 10</p>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
+                                            <input type="number" value="1" min="1" max="10" class="w-12 text-center border rounded" />
+                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
+                                        </div>
+                                        <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition">
+                                            🛒 Add to Cart
+                                        </button>
+                                        <a href="#" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-center text-muted my-4">
-                        No products available in this shop yet 🌸
-                    </p>
-                {% endif %}
-                
+                    {% endif %}
+                </div>
+
                 <!-- 🌼 Shop Details Button -->
-                <div class="text-center mt-4">
-                    <a href="{{ path('shop_show', {'id': shop.id}) }}"
-                       class="btn btn-pink rounded-pill px-4 py-2">
-                       🏪 View Shop Details
+                <div class="text-center mt-6">
+                    <a href="{{ path('shop_show', {'id': shop.id}) }}" class="inline-block bg-pink-600 text-white py-2 px-6 rounded-full hover:bg-pink-700 transition">
+                        🏪 View Shop Details
                     </a>
                 </div>
             </div>
@@ -91,80 +111,25 @@
     {% endif %}
 </div>
 
+<script>
+function incrementQty(productId) {
+    const input = document.getElementById('qty-' + productId);
+    if (parseInt(input.value) < parseInt(input.max)) input.value = parseInt(input.value) + 1;
+}
+function decrementQty(productId) {
+    const input = document.getElementById('qty-' + productId);
+    if (parseInt(input.value) > parseInt(input.min)) input.value = parseInt(input.value) - 1;
+}
+function addToCart(productId) {
+    const qty = document.getElementById('qty-' + productId)?.value || 1;
+    console.log(`Add product ${productId} to cart, qty: ${qty}`);
+    // TODO: AJAX call to add to cart
+}
+</script>
+
 <style>
-    body {
-        font-family: 'Cascadia Code', monospace;
-        background-color: #FFF8FB;
-        background-image: url('{{ asset("uploads/pattern.png") }}');
-        background-size: cover;
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-    }
-
-    .text-pink { color: #DB2777; }
-
-    .shop-section {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .shop-section:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 18px rgba(219, 39, 119, 0.2);
-    }
-
-    .product-card {
-        border-radius: 20px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        background-color: #fff;
-    }
-
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 18px rgba(219, 39, 119, 0.25);
-    }
-
-    .btn-outline-pink {
-        border: 2px solid #DB2777;
-        color: #DB2777;
-        font-weight: 600;
-        transition: 0.3s ease;
-    }
-
-    .btn-outline-pink:hover {
-        background-color: #DB2777;
-        color: white;
-        box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
-        transform: translateY(-2px);
-    }
-
-    .btn-pink {
-        background-color: #DB2777;
-        color: #fff;
-        font-weight: 600;
-        border: none;
-        transition: 0.3s ease;
-    }
-
-    .btn-pink:hover {
-        background-color: #b91c6b;
-        box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
-        transform: translateY(-2px);
-    }
-
-    h2 {
-        font-family: 'Bauhaus 93 Regular', cursive;
-    }
-
-    @media (max-width: 768px) {
-        .product-card img {
-            height: 180px;
-        }
-        .card-body h5 {
-            font-size: 1rem;
-        }
-        .shop-section {
-            padding: 2rem 1rem;
-        }
-    }
+.text-pink-600 { color: #DB2777; }
+.bg-pink-600 { background-color: #DB2777; }
+.bg-pink-700 { background-color: #b91c6b; }
 </style>
 {% endblock %}

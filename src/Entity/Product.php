@@ -29,15 +29,20 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Product')]
+    #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Product')]
+    #[ORM\OneToOne(inversedBy: 'product', targetEntity: Shop::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'shop_id', referencedColumnName: 'id', nullable: true)]
     private ?Shop $shop = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $addToShop = false;
 
     // ────────────────────────────────
     // Getters and Setters
     // ────────────────────────────────
+
     public function getId(): ?int
     {
         return $this->id;
@@ -48,7 +53,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -59,7 +64,7 @@ class Product
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(string $description): static
     {
         $this->description = $description;
         return $this;
@@ -70,7 +75,7 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(string $price): static
     {
         $this->price = $price;
         return $this;
@@ -81,7 +86,7 @@ class Product
         return $this->stock;
     }
 
-    public function setStock(int $stock): self
+    public function setStock(int $stock): static
     {
         $this->stock = $stock;
         return $this;
@@ -92,7 +97,7 @@ class Product
         return $this->image;
     }
 
-    public function setImage(?string $image): self
+    public function setImage(?string $image): static
     {
         $this->image = $image;
         return $this;
@@ -106,7 +111,6 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -117,8 +121,23 @@ class Product
 
     public function setShop(?Shop $shop): static
     {
-        $this->shop = $shop;
+        // sync with shop entity
+        if ($shop !== null && $shop->getProduct() !== $this) {
+            $shop->setProduct($this);
+        }
 
+        $this->shop = $shop;
+        return $this;
+    }
+
+    public function isAddToShop(): bool
+    {
+        return $this->addToShop;
+    }
+
+    public function setAddToShop(bool $addToShop): static
+    {
+        $this->addToShop = $addToShop;
         return $this;
     }
 }

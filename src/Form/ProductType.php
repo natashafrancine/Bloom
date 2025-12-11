@@ -6,30 +6,35 @@ use App\Entity\Product;
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
 
 class ProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // 🌸 Product name
             ->add('name', TextType::class, [
                 'label' => 'Product Name',
                 'attr' => [
                     'placeholder' => 'Enter product name',
                     'class' => 'form-control',
                 ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Product name is required.']),
+                ],
             ])
 
-            // 🌸 Description
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'attr' => [
@@ -37,49 +42,57 @@ class ProductType extends AbstractType
                     'rows' => 4,
                     'class' => 'form-control',
                 ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Description is required.']),
+                ],
             ])
 
-            // 🌸 Price
-            ->add('price', NumberType::class, [
+            ->add('price', MoneyType::class, [
                 'label' => 'Price (₱)',
+                'currency' => 'PHP',
+                'scale' => 2,
                 'attr' => [
                     'placeholder' => '0.00',
                     'class' => 'form-control',
                 ],
-                'scale' => 2,
+                'constraints' => [
+                    new NotBlank(['message' => 'Price is required.']),
+                    new Regex([
+                        'pattern' => '/^[0-9]+(\.[0-9]{1,2})?$/',
+                        'message' => 'Enter a valid price (numbers with up to 2 decimals).',
+                    ]),
+                ],
             ])
 
-            // 🌸 Stock
-            ->add('stock', NumberType::class, [
+            ->add('stock', IntegerType::class, [
                 'label' => 'Stock Quantity',
                 'attr' => [
                     'placeholder' => 'e.g., 50',
                     'class' => 'form-control',
                 ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Stock quantity is required.']),
+                    new Type(['type' => 'integer', 'message' => 'Stock must be a whole number.']),
+                    new PositiveOrZero(['message' => 'Stock cannot be negative.']),
+                ],
             ])
 
-            // 🌸 Category dropdown
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Select a category',
+                'multiple' => false,
+                'expanded' => false,
+                'required' => true,
                 'label' => 'Category',
                 'attr' => [
                     'class' => 'form-select',
                 ],
-            ])
-
-            // 🌸 Shop checkbox (add product to shop)
-            ->add('shop', CheckboxType::class, [
-                'label'    => 'Add to Shop',
-                'required' => false,
-                'mapped'   => false, // handled manually in controller
-                'attr'     => [
-                    'class' => 'form-check-input',
+                'constraints' => [
+                    new NotBlank(['message' => 'Please select a category.']),
                 ],
             ])
 
-            // 🌸 Product image upload
             ->add('image', FileType::class, [
                 'label' => 'Product Image (JPG, PNG, GIF)',
                 'mapped' => false,
@@ -92,12 +105,12 @@ class ProductType extends AbstractType
                             'image/png',
                             'image/gif',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, or GIF)',
+                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, GIF)',
                     ]),
                 ],
                 'attr' => [
                     'class' => 'form-control',
-                    'onchange' => 'previewImage(event)',
+                    'accept' => 'image/*',
                 ],
             ]);
     }

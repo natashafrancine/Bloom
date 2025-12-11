@@ -14,14 +14,27 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/shop')]
 class ShopController extends AbstractController
 {
-    #[Route('/', name: 'app_shop_index', methods: ['GET'])]
+    /**
+     * 🌸 Display all shops with their products
+     */
+    #[Route('/', name: 'shop_index', methods: ['GET'])]
     public function index(ShopRepository $shopRepository): Response
     {
+        // Eager-load products to avoid N+1 query problem
+        $shops = $shopRepository->createQueryBuilder('s')
+            ->leftJoin('s.product', 'p') // plural 'products'
+            ->addSelect('p')
+            ->getQuery()
+            ->getResult();
+
         return $this->render('shop/index.html.twig', [
-            'shops' => $shopRepository->findAll(),
+            'shops' => $shops,
         ]);
     }
 
+    /**
+     * 🌸 Create a new shop
+     */
     #[Route('/new', name: 'shop_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -42,14 +55,24 @@ class ShopController extends AbstractController
         ]);
     }
 
+    /**
+     * 🌸 Show a single shop with its products
+     */
     #[Route('/{id}', name: 'shop_show', methods: ['GET'])]
     public function show(Shop $shop): Response
     {
+        // Get all products related to this shop
+        $product = $shop->getProduct();
+
         return $this->render('shop/show.html.twig', [
             'shop' => $shop,
+            'product' => $product,
         ]);
     }
 
+    /**
+     * 🌸 Edit shop details
+     */
     #[Route('/{id}/edit', name: 'shop_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Shop $shop, EntityManagerInterface $em): Response
     {
@@ -68,6 +91,9 @@ class ShopController extends AbstractController
         ]);
     }
 
+    /**
+     * 🗑️ Delete a shop
+     */
     #[Route('/{id}/delete', name: 'shop_delete', methods: ['POST'])]
     public function delete(Request $request, Shop $shop, EntityManagerInterface $em): Response
     {

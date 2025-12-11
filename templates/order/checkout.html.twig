@@ -1,0 +1,230 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="mx-auto" style="max-width: 900px;">
+        <!-- Header -->
+        <div class="mb-5">
+            <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">🛒 Checkout</h1>
+            <p class="text-muted">Review your order and complete your purchase</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Order Items -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-bottom">
+                        <h5 class="mb-0 fw-bold">📦 Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr style="background-color: #f8f9fa;">
+                                        <th>Product</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    {% if item.product.image %}
+                                                        <img src="{{ asset('uploads/' ~ item.product.image) }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                                    {% endif %}
+                                                    <strong>{{ item.product.name }}</strong>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">{{ item.quantity }}</td>
+                                            <td class="text-end">₱{{ item.product.price|number_format(2, '.', ',') }}</td>
+                                            <td class="text-end fw-bold">₱{{ (item.quantity * item.product.price)|number_format(2, '.', ',') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Form -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light border-bottom">
+                        <h5 class="mb-0 fw-bold">📍 Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkoutForm" method="POST" action="{{ path('order_create') }}" class="needs-validation" novalidate>
+                            <input type="hidden" name="_token" value="{{ csrf_token('order_create') }}">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="customerName" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="customerName" name="customerName" placeholder="John Doe" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="customerEmail" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="customerEmail" name="customerEmail" placeholder="john@example.com" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="customerPhone" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="customerPhone" name="customerPhone" placeholder="09123456789" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="shippingMethod" class="form-label">Shipping Method *</label>
+                                    <select class="form-select" id="shippingMethod" name="shippingMethod" required>
+                                        <option value="">Select shipping method</option>
+                                        <option value="standard">Standard Delivery (₱150)</option>
+                                        <option value="express">Express Delivery (₱300)</option>
+                                        <option value="pickup">Pickup at Store (Free)</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="shippingAddress" class="form-label">Delivery Address *</label>
+                                    <textarea class="form-control" id="shippingAddress" name="shippingAddress" rows="3" placeholder="Enter your complete address" required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label for="notes" class="form-label">Order Notes (Optional)</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Add any special instructions for delivery"></textarea>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Payment Method -->
+                            <div class="mb-3">
+                                <h5 class="fw-bold mb-3">💳 Payment Method</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="paymentCard" name="paymentMethod" value="card" required>
+                                    <label class="form-check-label" for="paymentCard">Credit/Debit Card</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="paymentBank" name="paymentMethod" value="bank_transfer" required>
+                                    <label class="form-check-label" for="paymentBank">Bank Transfer</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="paymentCOD" name="paymentMethod" value="cod" required>
+                                    <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
+                                </div>
+                            </div>
+
+                            <!-- Terms -->
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    I agree to the <a href="#" class="text-pink">Terms and Conditions</a> and <a href="#" class="text-pink">Privacy Policy</a>
+                                </label>
+                            </div>
+
+                            <input type="hidden" name="subtotal" id="subtotalInput" value="0">
+                            <input type="hidden" name="shippingCost" id="shippingInput" value="0">
+                            <input type="hidden" name="taxAmount" id="taxInput" value="0">
+                            <button type="submit" class="btn btn-pink w-100 py-3 fw-bold">💳 Complete Purchase</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 20px; background: linear-gradient(135deg, #DB2777 0%, #c71d68 100%); color: white;">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-4">💰 Order Summary</h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">₱0.00</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span id="shipping">₱0.00</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-white border-opacity-25">
+                            <span>Tax (12%):</span>
+                            <span id="tax">₱0.00</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between" style="font-size: 1.25rem;">
+                            <strong>Total:</strong>
+                            <strong id="total">₱0.00</strong>
+                        </div>
+
+                        <hr class="border-white border-opacity-25 my-3">
+
+                        <div class="text-white-50 small">
+                            <p class="mb-2">✓ Secure checkout</p>
+                            <p class="mb-0">✓ Fast delivery</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #FAFAFA;
+        font-family: 'Poppins', sans-serif;
+        color: #374151;
+    }
+
+    .text-pink {
+        color: #DB2777;
+        text-decoration: none;
+    }
+
+    .text-pink:hover {
+        text-decoration: underline;
+    }
+
+    .btn-pink {
+        background-color: #DB2777;
+        border-color: #DB2777;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-pink:hover {
+        background-color: #b8214d;
+        border-color: #b8214d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+        color: white;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 8px;
+        border: 1px solid #E5E7EB;
+        padding: 0.6rem 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #DB2777;
+        box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.4rem;
+        font-size: 0.95rem;
+    }
+
+    .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
+{% endblock %}
