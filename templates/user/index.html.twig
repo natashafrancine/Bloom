@@ -39,7 +39,16 @@
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>
+                                    {% set display_roles = [] %}
                                     {% for role in user.roles %}
+                                        {% if role != 'ROLE_USER' %}
+                                            {% set display_roles = display_roles|merge([role]) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if display_roles is empty %}
+                                        {% set display_roles = ['ROLE_USER'] %}
+                                    {% endif %}
+                                    {% for role in display_roles %}
                                         <span class="badge bg-secondary">{{ role }}</span>
                                     {% endfor %}
                                 </td>

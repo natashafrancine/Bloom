@@ -29,7 +29,7 @@
                         <div class="mb-3">
                             <label for="role" class="form-label">Role *</label>
                             <select class="form-control" id="role" name="role" required>
-                                <option value="ROLE_USER" {% if 'ROLE_USER' in user.roles %}selected{% endif %}>User</option>
+                                <option value="ROLE_USER" {% if 'ROLE_USER' in user.roles and 'ROLE_ADMIN' not in user.roles and 'ROLE_STAFF' not in user.roles %}selected{% endif %}>User</option>
                                 <option value="ROLE_STAFF" {% if 'ROLE_STAFF' in user.roles %}selected{% endif %}>Staff</option>
                                 <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Admin</option>
                             </select>
