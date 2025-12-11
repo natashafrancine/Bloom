@@ -31,7 +31,7 @@ class UserController extends AbstractController
             $user = new User();
             $user->setEmail($request->request->get('email'));
             $user->setName($request->request->get('name'));
-            $user->setRoles(['ROLE_USER']);
+            $user->setRoles([$request->request->get('role')]);
 
             $plainPassword = $request->request->get('password');
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
@@ -84,6 +84,7 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $user->setEmail($request->request->get('email'));
             $user->setName($request->request->get('name'));
+            $user->setRoles([$request->request->get('role')]);
 
             if ($request->request->get('password')) {
                 $hashedPassword = $passwordHasher->hashPassword($user, $request->request->get('password'));
