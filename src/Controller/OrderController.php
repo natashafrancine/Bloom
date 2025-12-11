@@ -24,6 +24,92 @@ class OrderController extends AbstractController
         ]);
     }
 
+    #[Route('/new', name: 'order_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        if ($request->isMethod('POST')) {
+            $subtotal = (float) $request->request->get('subtotal', 0);
+            $shippingCost = (float) $request->request->get('shippingCost', 0);
+            $taxPercentage = (float) $request->request->get('taxPercentage', 0);
+
+            $taxAmount = $subtotal * ($taxPercentage / 100);
+            $totalAmount = $subtotal + $shippingCost + $taxAmount;
+
+            $order = new \App\Entity\Order();
+            $order->setCustomerName($request->request->get('customerName'));
+            $order->setCustomerEmail($request->request->get('customerEmail'));
+            $order->setCustomerPhone($request->request->get('customerPhone'));
+            $order->setShippingAddress($request->request->get('shippingAddress'));
+            $order->setNotes($request->request->get('notes'));
+            $order->setShippingMethod($request->request->get('shippingMethod'));
+            $order->setPaymentMethod($request->request->get('paymentMethod'));
+            $order->setSubtotal(number_format($subtotal, 2, '.', ''));
+            $order->setShippingCost(number_format($shippingCost, 2, '.', ''));
+            $order->setTaxAmount(number_format($taxAmount, 2, '.', ''));
+            $order->setTotalAmount(number_format($totalAmount, 2, '.', ''));
+            $order->setStatus($request->request->get('status', 'pending'));
+            $order->setPaymentStatus($request->request->get('paymentStatus', 'pending'));
+
+            $em->persist($order);
+            $em->flush();
+
+            $this->addFlash('success', 'Order created successfully.');
+            return $this->redirectToRoute('order_index');
+        }
+
+        return $this->render('order/new.html.twig');
+    }
+
+    #[Route('/{id}/edit', name: 'order_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, \App\Entity\Order $order, EntityManagerInterface $em): Response
+    {
+        if ($request->isMethod('POST')) {
+            $subtotal = (float) $request->request->get('subtotal', 0);
+            $shippingCost = (float) $request->request->get('shippingCost', 0);
+            $taxPercentage = (float) $request->request->get('taxPercentage', 0);
+
+            $taxAmount = $subtotal * ($taxPercentage / 100);
+            $totalAmount = $subtotal + $shippingCost + $taxAmount;
+
+            $order->setCustomerName($request->request->get('customerName'));
+            $order->setCustomerEmail($request->request->get('customerEmail'));
+            $order->setCustomerPhone($request->request->get('customerPhone'));
+            $order->setShippingAddress($request->request->get('shippingAddress'));
+            $order->setNotes($request->request->get('notes'));
+            $order->setShippingMethod($request->request->get('shippingMethod'));
+            $order->setPaymentMethod($request->request->get('paymentMethod'));
+            $order->setSubtotal(number_format($subtotal, 2, '.', ''));
+            $order->setShippingCost(number_format($shippingCost, 2, '.', ''));
+            $order->setTaxAmount(number_format($taxAmount, 2, '.', ''));
+            $order->setTotalAmount(number_format($totalAmount, 2, '.', ''));
+            $order->setStatus($request->request->get('status', 'pending'));
+            $order->setPaymentStatus($request->request->get('paymentStatus', 'pending'));
+            $order->setUpdatedAt(new \DateTime());
+
+            $em->flush();
+
+            $this->addFlash('success', 'Order updated successfully.');
+            return $this->redirectToRoute('order_index');
+        }
+
+        return $this->render('order/edit.html.twig', [
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'order_delete', methods: ['POST'])]
+    public function delete(Request $request, \App\Entity\Order $order, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$order->getId(), $request->request->get('_token'))) {
+            $em->remove($order);
+            $em->flush();
+
+            $this->addFlash('success', 'Order deleted successfully.');
+        }
+
+        return $this->redirectToRoute('order_index');
+    }
+
     #[Route('/{id}', name: 'order_show', methods: ['GET'])]
     public function show(int $id, OrderRepository $orderRepository): Response
     {

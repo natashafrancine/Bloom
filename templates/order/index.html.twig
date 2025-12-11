@@ -5,8 +5,13 @@
 {% block body %}
 <div class="container py-5">
     <div class="mb-5">
-        <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">📋 My Orders</h1>
-        <p class="text-muted">View and manage all your orders</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">📋 My Orders</h1>
+                <p class="text-muted">View and manage all your orders</p>
+            </div>
+            <a href="{{ path('order_new') }}" class="btn btn-pink px-4">+ Create Order</a>
+        </div>
     </div>
 
     {% if orders is empty %}
@@ -16,44 +21,54 @@
             <a href="{{ path('shop_index') }}" class="btn btn-pink px-4">🛍️ Start Shopping</a>
         </div>
     {% else %}
-        <div class="row">
-            {% for order in orders %}
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-light border-bottom">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h6 class="mb-0 fw-bold">Order #{{ order.id }}</h6>
-                                    <small class="text-muted">{{ order.createdAt|date('M d, Y h:i A') }}</small>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle shadow-sm bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.createdAt|date('M d, Y h:i A') }}</td>
+                            <td>{{ order.customerName }}</td>
+                            <td>{{ order.orderItems|length }}</td>
+                            <td>
+                                {% if order.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% elseif order.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% elseif order.status == 'cancelled' %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% elseif order.status == 'shipped' %}
+                                    <span class="badge bg-info">Shipped</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ order.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td><span class="text-pink fw-bold">₱{{ order.totalAmount|number_format(2, '.', ',') }}</span></td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ path('order_show', {'id': order.id}) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="{{ path('order_edit', {'id': order.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <form method="post" action="{{ path('order_delete', {'id': order.id}) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this order?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
                                 </div>
-                                <div class="col-auto">
-                                    <span class="badge bg-success">{{ order.status|upper }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <p class="mb-1"><strong>Items:</strong> {{ order.orderItems|length }}</p>
-                                <p class="mb-1"><strong>Total Amount:</strong> <span class="text-pink fw-bold">₱{{ order.totalAmount|number_format(2, '.', ',') }}</span></p>
-                                <p class="mb-0"><strong>Status:</strong> 
-                                    {% if order.status == 'pending' %}
-                                        <span class="badge bg-warning">Pending</span>
-                                    {% elseif order.status == 'completed' %}
-                                        <span class="badge bg-success">Completed</span>
-                                    {% elseif order.status == 'cancelled' %}
-                                        <span class="badge bg-danger">Cancelled</span>
-                                    {% elseif order.status == 'shipped' %}
-                                        <span class="badge bg-info">Shipped</span>
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light">
-                            <a href="{{ path('order_show', {'id': order.id}) }}" class="btn btn-sm btn-pink text-white">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% endif %}
 </div>
