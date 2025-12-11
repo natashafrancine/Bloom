@@ -5,12 +5,44 @@
 {% block body %}
 <div class="container py-5">
     <div class="mb-5">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">📋 My Orders</h1>
-                <p class="text-muted">View and manage all your orders</p>
-            </div>
-            <a href="{{ path('order_new') }}" class="btn btn-pink px-4">+ Create Order</a>
+        <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93'; font-size: 2.5rem;">📋 My Orders</h1>
+        <p class="text-muted">View and manage all your orders</p>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" name="search" value="{{ search }}" placeholder="Search by order ID, customer name, or email">
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Order Status</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="processing" {% if status == 'processing' %}selected{% endif %}>Processing</option>
+                        <option value="shipped" {% if status == 'shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+                        <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="payment_status" class="form-label">Payment Status</label>
+                    <select class="form-control" id="payment_status" name="payment_status">
+                        <option value="">All Payment Statuses</option>
+                        <option value="pending" {% if payment_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="paid" {% if payment_status == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="failed" {% if payment_status == 'failed' %}selected{% endif %}>Failed</option>
+                        <option value="refunded" {% if payment_status == 'refunded' %}selected{% endif %}>Refunded</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-pink me-2">🔍 Search</button>
+                    <a href="{{ path('order_index') }}" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -21,6 +53,15 @@
             <a href="{{ path('shop_index') }}" class="btn btn-pink px-4">🛍️ Start Shopping</a>
         </div>
     {% else %}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span class="text-muted">Showing {{ orders|length }} order{{ orders|length != 1 ? 's' : '' }}</span>
+            </div>
+            <a href="{{ path('order_new') }}" class="btn btn-pink px-4">
+                <i class="bi bi-plus-circle"></i> Create Order
+            </a>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle shadow-sm bg-white">
                 <thead class="table-light">

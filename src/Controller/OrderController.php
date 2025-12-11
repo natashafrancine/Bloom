@@ -15,12 +15,37 @@ use App\Entity\OrderItem;
 class OrderController extends AbstractController
 {
     #[Route('/', name: 'order_index', methods: ['GET'])]
-    public function index(OrderRepository $orderRepository): Response
+    public function index(Request $request, OrderRepository $orderRepository): Response
     {
-        $orders = $orderRepository->findBy([], ['createdAt' => 'DESC']);
+        $search = $request->query->get('search', '');
+        $status = $request->query->get('status', '');
+        $paymentStatus = $request->query->get('payment_status', '');
+
+        $qb = $orderRepository->createQueryBuilder('o')
+            ->orderBy('o.createdAt', 'DESC');
+
+        if (!empty($search)) {
+            $qb->andWhere('o.customerName LIKE :search OR o.customerEmail LIKE :search OR o.id LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        if (!empty($status)) {
+            $qb->andWhere('o.status = :status')
+               ->setParameter('status', $status);
+        }
+
+        if (!empty($paymentStatus)) {
+            $qb->andWhere('o.paymentStatus = :paymentStatus')
+               ->setParameter('paymentStatus', $paymentStatus);
+        }
+
+        $orders = $qb->getQuery()->getResult();
 
         return $this->render('order/index.html.twig', [
             'orders' => $orders,
+            'search' => $search,
+            'status' => $status,
+            'payment_status' => $paymentStatus,
         ]);
     }
 
