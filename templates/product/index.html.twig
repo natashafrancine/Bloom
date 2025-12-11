@@ -69,7 +69,6 @@
                     <th>ID</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Shop</th>
                     <th>Category</th>
                     <th>Description</th>
                     <th>Price (₱)</th>
@@ -92,14 +91,6 @@
                     </td>
 
                     <td class="fw-semibold">{{ p.name }}</td>
-
-                    <!-- TOGGLE SHOP -->
-                    <td class="text-center">
-                        <label class="switch">
-                            <input type="checkbox" class="toggle-shop" data-id="{{ p.id }}" {% if p.shop %}checked{% endif %}>
-                            <span class="slider round"></span>
-                        </label>
-                    </td>
 
                     <td class="text-muted small">{{ p.category ? p.category.name : '—' }}</td>
 
@@ -145,24 +136,6 @@ $(document).ready(function() {
     });
 });
 
-/* AJAX TOGGLE SHOP */
-$(document).on('change', '.toggle-shop', function () {
-    let productId = $(this).data('id');
-    let newStatus = $(this).is(':checked') ? 1 : 0;
-
-    $.ajax({
-        url: "{{ path('product_toggle_shop') }}",
-        method: "POST",
-        data: { id: productId, shop: newStatus },
-        success: function () {
-            console.log("Shop status updated");
-            location.reload(); // Reload to update sidebar
-        },
-        error: function () {
-            alert("Error updating shop status");
-        }
-    });
-});
 </script>
 
 <style>
@@ -197,49 +170,6 @@ body {
     background-color: #FFF0F6 !important;
 }
 
-/* TOGGLE SWITCH */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-}
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    border-radius: 34px;
-    transition: .4s;
-}
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: .4s;
-}
-input:checked + .slider {
-    background-color: #DB2777;
-}
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-.slider.round {
-    border-radius: 34px;
-}
 </style>
 
 {% endblock %}
