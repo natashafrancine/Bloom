@@ -9,7 +9,13 @@
         <p class="text-muted">Manage all registered users</p>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{{ path('user_index') }}" class="btn btn-outline-secondary btn-sm {% if not app.request.query.get('role') %}active{% endif %}">All</a>
+            <a href="{{ path('user_index', {'role': 'ROLE_USER'}) }}" class="btn btn-outline-secondary btn-sm {% if app.request.query.get('role') == 'ROLE_USER' %}active{% endif %}">Users</a>
+            <a href="{{ path('user_index', {'role': 'ROLE_ADMIN'}) }}" class="btn btn-outline-secondary btn-sm {% if app.request.query.get('role') == 'ROLE_ADMIN' %}active{% endif %}">Admins</a>
+            <a href="{{ path('user_index', {'role': 'ROLE_STAFF'}) }}" class="btn btn-outline-secondary btn-sm {% if app.request.query.get('role') == 'ROLE_STAFF' %}active{% endif %}">Staff</a>
+        </div>
         <a href="{{ path('user_new') }}" class="btn btn-pink px-4">➕ Add New User</a>
     </div>
 

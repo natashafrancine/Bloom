@@ -17,10 +17,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController
 {
     #[Route('/', name: 'user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository): Response
     {
+        $role = $request->query->get('role');
+        if ($role) {
+            $users = $userRepository->findByRole($role);
+        } else {
+            $users = $userRepository->findAll();
+        }
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
+            'current_role' => $role,
         ]);
     }
 
