@@ -51,17 +51,6 @@
                                         <p class="text-xs text-gray-400 mb-2">Stock: {{ product.stock }}</p>
                                     </div>
 
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="decrementQty({{ product.id }})">-</button>
-                                            <input type="number" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.stock }}" class="w-12 text-center border rounded" />
-                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="incrementQty({{ product.id }})">+</button>
-                                        </div>
-                                        <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition" onclick="addToCart({{ product.id }})">
-                                            🛒 Add to Cart
-                                        </button>
-                                        <a href="{{ path('product_show', {'id': product.id}) }}" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
-                                    </div>
                                 </div>
                             </div>
                 {% endfor %}
