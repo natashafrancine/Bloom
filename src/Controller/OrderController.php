@@ -24,7 +24,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'order_show', methods: ['GET'])]
     public function show(int $id, OrderRepository $orderRepository): Response
     {
         $order = $orderRepository->find($id);
@@ -37,7 +37,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/checkout', name: 'checkout', methods: ['GET', 'POST'])]
+    #[Route('/{id}/checkout', name: 'order_checkout', methods: ['GET', 'POST'])]
     public function checkout(int $id, OrderRepository $orderRepository): Response
     {
         // In a full implementation you'd load the cart by user/session.
@@ -60,7 +60,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/', name: 'create', methods: ['POST'])]
+    #[Route('/create', name: 'order_create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em, ProductRepository $productRepository): Response
     {
         $data = $request->request;
@@ -161,7 +161,7 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('order_show', ['id' => $order->getId()]);
     }
 
-    #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
+    #[Route('/{id}/cancel', name: 'order_cancel', methods: ['POST'])]
     public function cancel(int $id, Request $request, OrderRepository $orderRepository, EntityManagerInterface $em): Response
     {
         $order = $orderRepository->find($id);

@@ -33,41 +33,42 @@
 
                 <!-- 🪷 Product Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {% if shop.product %}
-                        {% set product = shop.product %}
-                        <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
-                            <!-- Product Image -->
-                            <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
-                                {% if product.image %}
-                                    <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-                                {% else %}
-                                    <img src="{{ asset('uploads/no-image.png') }}" alt="No Image" class="w-full h-full object-cover">
-                                {% endif %}
-                            </div>
-
-                            <!-- Product Info -->
-                            <div class="flex-1 flex flex-col justify-between">
-                                <div class="mb-2">
-                                    <h5 class="text-lg font-bold text-pink-600 mb-1">{{ product.name }}</h5>
-                                    <p class="text-sm text-gray-500 mb-1">{{ product.category ? product.category.name : 'Uncategorized' }}</p>
-                                    <p class="text-sm text-gray-600 mb-2">{{ product.description|length > 70 ? product.description|slice(0,70) ~ '...' : product.description }}</p>
-                                    <p class="font-semibold text-gray-800 mb-1">₱{{ product.price|number_format(2, '.', ',') }}</p>
-                                    <p class="text-xs text-gray-400 mb-2">Stock: {{ product.stock }}</p>
+                    {% if shop.product is not empty %}
+                        {% for product in shop.product %}
+                            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
+                                <!-- Product Image -->
+                                <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
+                                    {% if product.image %}
+                                        <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <img src="{{ asset('uploads/no-image.png') }}" alt="No Image" class="w-full h-full object-cover">
+                                    {% endif %}
                                 </div>
 
-                                <div class="flex flex-col gap-2">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="decrementQty({{ product.id }})">-</button>
-                                        <input type="number" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.stock }}" class="w-12 text-center border rounded" />
-                                        <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="incrementQty({{ product.id }})">+</button>
+                                <!-- Product Info -->
+                                <div class="flex-1 flex flex-col justify-between">
+                                    <div class="mb-2">
+                                        <h5 class="text-lg font-bold text-pink-600 mb-1">{{ product.name }}</h5>
+                                        <p class="text-sm text-gray-500 mb-1">{{ product.category ? product.category.name : 'Uncategorized' }}</p>
+                                        <p class="text-sm text-gray-600 mb-2">{{ product.description|length > 70 ? product.description|slice(0,70) ~ '...' : product.description }}</p>
+                                        <p class="font-semibold text-gray-800 mb-1">₱{{ product.price|number_format(2, '.', ',') }}</p>
+                                        <p class="text-xs text-gray-400 mb-2">Stock: {{ product.stock }}</p>
                                     </div>
-                                    <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition" onclick="addToCart({{ product.id }})">
-                                        🛒 Add to Cart
-                                    </button>
-                                    <a href="{{ path('product_show', {'id': product.id}) }}" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
+
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="decrementQty({{ product.id }})">-</button>
+                                            <input type="number" id="qty-{{ product.id }}" value="1" min="1" max="{{ product.stock }}" class="w-12 text-center border rounded" />
+                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onclick="incrementQty({{ product.id }})">+</button>
+                                        </div>
+                                        <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition" onclick="addToCart({{ product.id }})">
+                                            🛒 Add to Cart
+                                        </button>
+                                        <a href="{{ path('product_show', {'id': product.id}) }}" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endfor %}
                     {% else %}
                         <!-- Sample Flower Bouquets -->
                         {% for i in 1..4 %}
