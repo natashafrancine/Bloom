@@ -11,7 +11,6 @@
   </div>
   <nav class="mt-4">
     <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
-    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'shop' %}active{% endif %}" href="{{ path('shop_index') }}">Shop</a>
     <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
     <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
     <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
