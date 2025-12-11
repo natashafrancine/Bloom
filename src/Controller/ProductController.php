@@ -7,6 +7,7 @@ use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ShopRepository;
+use App\Service\ActivityLogger;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,10 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     private FileUploader $fileUploader;
+    private ActivityLogger $activityLogger;
 
-    public function __construct(FileUploader $fileUploader)
+    public function __construct(FileUploader $fileUploader, ActivityLogger $activityLogger)
     {
         $this->fileUploader = $fileUploader;
+        $this->activityLogger = $activityLogger;
     }
 
     /**
@@ -44,6 +47,12 @@ class ProductController extends AbstractController
         $categories = $categoryRepository->findAll();
         $shopProducts = $productRepository->findBy(['addToShop' => true]);
         $shop = $shopRepository->findOneBy([]);
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Viewed Products', 'Accessed the products page');
+        }
 
         return $this->render('product/index.html.twig', [
             'products' => $products,

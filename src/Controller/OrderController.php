@@ -10,10 +10,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Entity\OrderItem;
+use App\Service\ActivityLogger;
 
 #[Route('/order')]
 class OrderController extends AbstractController
 {
+    private ActivityLogger $activityLogger;
+
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     #[Route('/', name: 'order_index', methods: ['GET'])]
     public function index(Request $request, OrderRepository $orderRepository): Response
     {
@@ -40,6 +48,12 @@ class OrderController extends AbstractController
         }
 
         $orders = $qb->getQuery()->getResult();
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Viewed Orders', 'Accessed the orders page');
+        }
 
         return $this->render('order/index.html.twig', [
             'orders' => $orders,

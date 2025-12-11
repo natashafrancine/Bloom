@@ -12,10 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Service\ActivityLogger;
 
 #[Route('/user')]
 class UserController extends AbstractController
 {
+    private ActivityLogger $activityLogger;
+
+    public function __construct(ActivityLogger $activityLogger)
+    {
+        $this->activityLogger = $activityLogger;
+    }
+
     #[Route('/', name: 'user_index', methods: ['GET'])]
     public function index(Request $request, UserRepository $userRepository): Response
     {
@@ -24,6 +32,12 @@ class UserController extends AbstractController
             $users = $userRepository->findByRole($role);
         } else {
             $users = $userRepository->findAll();
+        }
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Viewed Users', 'Accessed the users page');
         }
 
         return $this->render('user/index.html.twig', [
