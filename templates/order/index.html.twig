@@ -63,7 +63,8 @@
                     <th>Date</th>
                     <th>Customer</th>
                     <th>Items</th>
-                    <th>Status</th>
+                    <th>Order Status</th>
+                    <th>Payment Status</th>
                     <th>Total</th>
                     <th>Actions</th>
                 </tr>
@@ -88,6 +89,19 @@
                                 <span class="badge bg-secondary">{{ order.status|title }}</span>
                             {% endif %}
                         </td>
+                        <td>
+                            {% if order.paymentStatus == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% elseif order.paymentStatus == 'paid' %}
+                                <span class="badge bg-success">Paid</span>
+                            {% elseif order.paymentStatus == 'failed' %}
+                                <span class="badge bg-danger">Failed</span>
+                            {% elseif order.paymentStatus == 'refunded' %}
+                                <span class="badge bg-info">Refunded</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ order.paymentStatus|title }}</span>
+                            {% endif %}
+                        </td>
                         <td><span class="text-pink fw-bold">₱{{ order.totalAmount|number_format(2, '.', ',') }}</span></td>
                         <td>
                             <div class="btn-group" role="group">
@@ -102,7 +116,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="7" class="text-center py-5">
+                        <td colspan="8" class="text-center py-5">
                             <div class="text-muted">
                                 <i class="bi bi-inbox fs-1 d-block mb-3"></i>
                                 <h5>No orders found</h5>
