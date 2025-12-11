@@ -62,7 +62,7 @@
                     <th>Order ID</th>
                     <th>Date</th>
                     <th>Customer</th>
-                    <th>Items</th>
+                    <th>Products</th>
                     <th>Order Status</th>
                     <th>Payment Status</th>
                     <th>Total</th>
@@ -75,7 +75,15 @@
                         <td><strong>#{{ order.id }}</strong></td>
                         <td>{{ order.createdAt|date('M d, Y h:i A') }}</td>
                         <td>{{ order.customerName }}</td>
-                        <td>{{ order.orderItems|length }}</td>
+                        <td>
+                            {% for item in order.orderItems %}
+                                <div class="mb-1">
+                                    <small class="text-muted">{{ item.product.name }} ({{ item.quantity }})</small>
+                                </div>
+                            {% else %}
+                                <small class="text-muted">No items</small>
+                            {% endfor %}
+                        </td>
                         <td>
                             {% if order.status == 'pending' %}
                                 <span class="badge bg-warning">Pending</span>
@@ -116,7 +124,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="8" class="text-center py-5">
+                        <td colspan="9" class="text-center py-5">
                             <div class="text-muted">
                                 <i class="bi bi-inbox fs-1 d-block mb-3"></i>
                                 <h5>No orders found</h5>

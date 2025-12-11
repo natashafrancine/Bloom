@@ -67,7 +67,7 @@
                                             <select class="form-control" id="productSelect">
                                                 <option value="">Select a product</option>
                                                 {% for product in products %}
-                                                    <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }} - ${{ product.price }}</option>
+                                                    <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }} - ₱{{ product.price }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -193,9 +193,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const total = (item.price * item.quantity).toFixed(2);
             html += `<tr>
                 <td>${item.name}</td>
-                <td>$${item.price.toFixed(2)}</td>
+                <td>₱${item.price.toFixed(2)}</td>
                 <td>${item.quantity}</td>
-                <td>$${total}</td>
+                <td>₱${total}</td>
                 <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(${index})">Remove</button></td>
             </tr>`;
         });
