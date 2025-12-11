@@ -175,6 +175,18 @@
   <!-- 🌺 Main Content Area -->
   <div class="main-content flex-fill">
     <main>
+      {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ message|raw }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
       {% block body %}{% endblock %}
     </main>
 

@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -23,7 +25,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator): Response
     {
         if ($request->isMethod('POST')) {
             $user = new User();
@@ -31,13 +33,38 @@ class UserController extends AbstractController
             $user->setName($request->request->get('name'));
             $user->setRoles(['ROLE_USER']);
 
-            $hashedPassword = $passwordHasher->hashPassword($user, $request->request->get('password'));
+            $plainPassword = $request->request->get('password');
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            $em->persist($user);
-            $em->flush();
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                $errorMessages = [];
+                foreach ($errors as $error) {
+                    $errorMessages[] = $error->getMessage();
+                }
+                $this->addFlash('error', implode('<br>', $errorMessages));
+                return $this->render('user/new.html.twig', [
+                    'user' => $user,
+                ]);
+            }
 
-            return $this->redirectToRoute('user_index');
+            try {
+                $em->persist($user);
+                $em->flush();
+                $this->addFlash('success', 'User created successfully.');
+                return $this->redirectToRoute('user_index');
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('error', 'Email already exists.');
+                return $this->render('user/new.html.twig', [
+                    'user' => $user,
+                ]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'An error occurred while saving the user.');
+                return $this->render('user/new.html.twig', [
+                    'user' => $user,
+                ]);
+            }
         }
 
         return $this->render('user/new.html.twig');
