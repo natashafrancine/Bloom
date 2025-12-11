@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ShopRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,8 +22,13 @@ class Shop
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToOne(targetEntity: Product::class, mappedBy: 'shop', cascade: ['persist', 'remove'])]
-    private ?Product $product = null;
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'shop', cascade: ['persist', 'remove'])]
+    private Collection $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -50,19 +57,32 @@ class Shop
         return $this;
     }
 
-    public function getProduct(): ?Product
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getProducts(): Collection
     {
-        return $this->product;
+        return $this->products;
     }
 
-    public function setProduct(?Product $product): static
+    public function addProduct(Product $product): static
     {
-        // set the owning side of the relation if necessary
-        if ($product !== null && $product->getShop() !== $this) {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
             $product->setShop($this);
         }
 
-        $this->product = $product;
+        return $this;
+    }
+
+    public function removeProduct(Product $product): static
+    {
+        if ($this->products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getShop() === $this) {
+                $product->setShop(null);
+            }
+        }
 
         return $this;
     }

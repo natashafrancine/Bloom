@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Shop;
 use App\Form\ShopType;
+use App\Repository\ProductRepository;
 use App\Repository\ShopRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,17 +19,12 @@ class ShopController extends AbstractController
      * 🌸 Display all shops with their products
      */
     #[Route('/', name: 'shop_index', methods: ['GET'])]
-    public function index(ShopRepository $shopRepository): Response
+    public function index(ProductRepository $productRepository): Response
     {
-        // Eager-load products to avoid N+1 query problem
-        $shops = $shopRepository->createQueryBuilder('s')
-            ->leftJoin('s.product', 'p') // plural 'products'
-            ->addSelect('p')
-            ->getQuery()
-            ->getResult();
+        $shopProducts = $productRepository->findBy(['addToShop' => true]);
 
         return $this->render('shop/index.html.twig', [
-            'shops' => $shops,
+            'shopProducts' => $shopProducts,
         ]);
     }
 
@@ -62,11 +58,11 @@ class ShopController extends AbstractController
     public function show(Shop $shop): Response
     {
         // Get all products related to this shop
-        $product = $shop->getProduct();
+        $products = $shop->getProducts();
 
         return $this->render('shop/show.html.twig', [
             'shop' => $shop,
-            'product' => $product,
+            'products' => $products,
         ]);
     }
 

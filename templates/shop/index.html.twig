@@ -15,26 +15,22 @@
         </p>
     </div>
 
-    {% if shops is empty %}
+    {% if shopProducts is empty %}
         <div class="text-center py-10">
-            <p class="text-gray-500 text-lg">No shops available at the moment 🌷</p>
+            <p class="text-gray-500 text-lg">No products in shop at the moment 🌷</p>
         </div>
     {% else %}
-        {% for shop in shops %}
-            <div class="mb-10 p-6 bg-white shadow-md rounded-xl border border-gray-100">
-                
-                <!-- 🏪 Shop Title -->
-                <h2 class="text-2xl font-extrabold text-pink-600 text-center mb-4">
-                    {{ shop.name }}
-                </h2>
-                {% if shop.description %}
-                    <p class="text-center text-gray-500 mb-6">{{ shop.description }}</p>
-                {% endif %}
+        <div class="mb-10 p-6 bg-white shadow-md rounded-xl border border-gray-100">
 
-                <!-- 🪷 Product Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {% if shop.product is not empty %}
-                        {% for product in shop.product %}
+            <!-- 🏪 Shop Title -->
+            <h2 class="text-2xl font-extrabold text-pink-600 text-center mb-4">
+                Shop Products
+            </h2>
+            <p class="text-center text-gray-500 mb-6">Products added to the shop</p>
+
+            <!-- 🪷 Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for product in shopProducts %}
                             <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
                                 <!-- Product Image -->
                                 <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
@@ -68,47 +64,9 @@
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
-                    {% else %}
-                        <!-- Sample Flower Bouquets -->
-                        {% for i in 1..4 %}
-                            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
-                                <div class="relative w-full h-56 overflow-hidden rounded-xl mb-4">
-                                    <img src="{{ asset('uploads/sample-bouquet' ~ i ~ '.jpg') }}" alt="Sample Bouquet {{ i }}" class="w-full h-full object-cover">
-                                </div>
-                                <div class="flex-1 flex flex-col justify-between">
-                                    <div class="mb-2">
-                                        <h5 class="text-lg font-bold text-pink-600 mb-1">Sample Bouquet {{ i }}</h5>
-                                        <p class="text-sm text-gray-500 mb-1">Bouquet</p>
-                                        <p class="text-sm text-gray-600 mb-2">A beautiful floral arrangement perfect for gifting and decorating your home.</p>
-                                        <p class="font-semibold text-gray-800 mb-1">₱1,500.00</p>
-                                        <p class="text-xs text-gray-400 mb-2">Stock: 10</p>
-                                    </div>
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
-                                            <input type="number" value="1" min="1" max="10" class="w-12 text-center border rounded" />
-                                            <button type="button" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
-                                        </div>
-                                        <button type="button" class="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition">
-                                            🛒 Add to Cart
-                                        </button>
-                                        <a href="#" class="text-center text-pink-600 hover:underline mt-1 text-sm">View Product 🌺</a>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <!-- 🌼 Shop Details Button -->
-                <div class="text-center mt-6">
-                    <a href="{{ path('shop_show', {'id': shop.id}) }}" class="inline-block bg-pink-600 text-white py-2 px-6 rounded-full hover:bg-pink-700 transition">
-                        🏪 View Shop Details
-                    </a>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     {% endif %}
 </div>
 

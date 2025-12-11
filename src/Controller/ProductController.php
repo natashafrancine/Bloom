@@ -31,7 +31,8 @@ class ProductController extends AbstractController
     public function index(
         Request $request,
         ProductRepository $productRepository,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        ShopRepository $shopRepository
     ): Response {
         $categoryId = $request->query->get('category');
         $currentCategory = $categoryId ? $categoryRepository->find($categoryId) : null;
@@ -41,11 +42,15 @@ class ProductController extends AbstractController
             : $productRepository->findAll();
 
         $categories = $categoryRepository->findAll();
+        $shopProducts = $productRepository->findBy(['addToShop' => true]);
+        $shop = $shopRepository->findOneBy([]);
 
         return $this->render('product/index.html.twig', [
             'products' => $products,
             'categories' => $categories,
             'currentCategory' => $currentCategory,
+            'shopProducts' => $shopProducts,
+            'shop' => $shop,
         ]);
     }
 
@@ -70,11 +75,6 @@ class ProductController extends AbstractController
 
             $addToShop = $form->has('addToShop') ? $form->get('addToShop')->getData() : false;
             $product->setAddToShop($addToShop);
-
-            if ($addToShop) {
-                $shop = $shopRepository->findOneBy([]);
-                if ($shop) $product->setShop($shop);
-            }
 
             $em->persist($product);
             $em->flush();
@@ -116,13 +116,6 @@ class ProductController extends AbstractController
 
             $addToShop = $form->has('addToShop') ? $form->get('addToShop')->getData() : false;
             $product->setAddToShop($addToShop);
-
-            if ($addToShop) {
-                $shop = $shopRepository->findOneBy([]);
-                if ($shop) $product->setShop($shop);
-            } else {
-                $product->setShop(null);
-            }
 
             $em->flush();
             $this->addFlash('success', '🌷 Product updated successfully!');

@@ -2,6 +2,49 @@
 
 {% block title %}Products - BLOOM{% endblock %}
 
+{% block header %}
+<aside class="sidebar">
+  <div class="text-center">
+    <a href="{{ path('app_home') }}">
+      <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img">
+    </a>
+  </div>
+  <nav class="mt-4">
+    <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
+    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'shop' %}active{% endif %}" href="{{ path('shop_index') }}">Shop</a>
+    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
+    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
+    <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
+  </nav>
+
+  <!-- Shop Products Section -->
+  <div class="mt-4">
+    <h5 class="text-white text-center mb-3" style="font-family: 'Cascadia Code', monospace;">🛒 Shop Products</h5>
+    {% if shopProducts is not empty %}
+      <div class="shop-products-list" style="max-height: 300px; overflow-y: auto;">
+        {% for product in shopProducts %}
+          <div class="shop-product-item p-2 mb-2 bg-white bg-opacity-10 rounded text-white small">
+            <div class="d-flex align-items-center">
+              {% if product.image %}
+                <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="me-2" style="width: 30px; height: 30px; object-fit: cover; border-radius: 5px;">
+              {% endif %}
+              <div>
+                <strong>{{ product.name }}</strong><br>
+                <small>₱{{ product.price|number_format(2, '.', ',') }}</small>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-white text-center small">No products in shop</p>
+    {% endif %}
+  </div>
+</aside>
+{% endblock %}
+
+
+
 {% block body %}
 <div class="text-center mb-5">
     <h1 style="font-family: 'Bauhaus 93 Regular', cursive; color: #DB2777;">Product Inventory</h1>
@@ -136,6 +179,7 @@ $(document).on('change', '.toggle-shop', function () {
         data: { id: productId, shop: newStatus },
         success: function () {
             console.log("Shop status updated");
+            location.reload(); // Reload to update sidebar
         },
         error: function () {
             alert("Error updating shop status");
