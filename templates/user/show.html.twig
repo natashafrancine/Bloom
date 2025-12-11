@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Details - BLOOM{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h1 class="fw-bold text-pink mb-2" style="font-family: 'Bauhaus 93 Regular', sans-serif;">User Details</h1>
+        <p class="text-muted">View user information</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">ID</dt>
+                        <dd class="col-sm-9">{{ user.id }}</dd>
+
+                        <dt class="col-sm-3">Name</dt>
+                        <dd class="col-sm-9">{{ user.name }}</dd>
+
+                        <dt class="col-sm-3">Email</dt>
+                        <dd class="col-sm-9">{{ user.email }}</dd>
+
+                        <dt class="col-sm-3">Roles</dt>
+                        <dd class="col-sm-9">
+                            {% for role in user.roles %}
+                                <span class="badge bg-secondary">{{ role }}</span>
+                            {% endfor %}
+                        </dd>
+                    </dl>
+
+                    <div class="mt-4">
+                        <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-warning">Edit</a>
+                        <a href="{{ path('user_index') }}" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

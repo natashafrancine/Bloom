@@ -60,11 +60,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-<<<<<<< HEAD
     #[Route('/create', name: 'order_create', methods: ['POST'])]
-=======
-    #[Route('/', name: 'order_create', methods: ['POST'])]
->>>>>>> f660df623c1826db8f0a116535e4d38aaedfa838
     public function create(Request $request, EntityManagerInterface $em, ProductRepository $productRepository): Response
     {
         $data = $request->request;

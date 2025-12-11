@@ -159,7 +159,6 @@
       </a>
     </div>
     <nav class="mt-4">
-<<<<<<< HEAD
       <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" href="{{ path('app_home') }}">Home</a>
       {#
       <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">🌺 About</a>
@@ -169,23 +168,6 @@
       <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
       <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
       <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
-=======
-      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}" 
-         href="{% if app.router.has('app_home') %}{{ path('app_home') }}{% else %}#{% endif %}">Home</a>
-      
-      {# Commented links for future use #}
-      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" 
-         href="{% if app.router.has('app_about') %}{{ path('app_about') }}{% else %}#{% endif %}">🌺 About</a>
-      <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" 
-         href="{% if app.router.has('app_contact') %}{{ path('app_contact') }}{% else %}#{% endif %}">📞 Contact</a>
-
-      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'shop' %}active{% endif %}" 
-         href="{% if app.router.has('shop_index') %}{{ path('shop_index') }}{% else %}#{% endif %}">Shop</a>
-      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" 
-         href="{% if app.router.has('product_index') %}{{ path('product_index') }}{% else %}#{% endif %}">Products</a>
-      <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" 
-         href="{% if app.router.has('order_index') %}{{ path('order_index') }}{% else %}#{% endif %}">Orders</a>
->>>>>>> f660df623c1826db8f0a116535e4d38aaedfa838
     </nav>
   </aside>
   {% endblock %}
