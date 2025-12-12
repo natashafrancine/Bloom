@@ -74,6 +74,13 @@ class UserController extends AbstractController
             try {
                 $em->persist($user);
                 $em->flush();
+
+                // Log activity
+                $currentUser = $this->getUser();
+                if ($currentUser) {
+                    $this->activityLogger->log($currentUser, 'Created User', "Added new user: {$user->getEmail()} with role {$user->getRoles()[0]}");
+                }
+
                 $this->addFlash('success', 'User created successfully.');
                 return $this->redirectToRoute('user_index');
             } catch (UniqueConstraintViolationException $e) {
@@ -115,6 +122,13 @@ class UserController extends AbstractController
 
             $em->flush();
 
+            // Log activity
+            $currentUser = $this->getUser();
+            if ($currentUser) {
+                $this->activityLogger->log($currentUser, 'Updated User', "Modified user: {$user->getEmail()}");
+            }
+
+            $this->addFlash('success', 'User updated successfully.');
             return $this->redirectToRoute('user_index');
         }
 
@@ -147,6 +161,13 @@ class UserController extends AbstractController
 
         try {
             $em->flush();
+            
+            // Log activity
+            $currentUser = $this->getUser();
+            if ($currentUser) {
+                $this->activityLogger->log($currentUser, 'Updated Profile', "Updated profile for user: {$user->getEmail()}");
+            }
+
             return $this->json(['success' => true, 'message' => 'Profile updated successfully']);
         } catch (UniqueConstraintViolationException $e) {
             return $this->json(['success' => false, 'message' => 'Email already exists'], 400);
@@ -179,8 +200,18 @@ class UserController extends AbstractController
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $userEmail = $user->getEmail();
+            
             $em->remove($user);
             $em->flush();
+
+            // Log activity
+            $currentUser = $this->getUser();
+            if ($currentUser) {
+                $this->activityLogger->log($currentUser, 'Deleted User', "Removed user: {$userEmail}");
+            }
+
+            $this->addFlash('success', 'User deleted successfully.');
         }
 
         return $this->redirectToRoute('user_index');

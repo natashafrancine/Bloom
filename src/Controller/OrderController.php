@@ -116,6 +116,12 @@ class OrderController extends AbstractController
             $em->persist($order);
             $em->flush();
 
+            // Log activity
+            $user = $this->getUser();
+            if ($user) {
+                $this->activityLogger->log($user, 'Created Order', "Created order #{$order->getId()} for {$order->getCustomerName()}");
+            }
+
             $this->addFlash('success', 'Order created successfully.');
             return $this->redirectToRoute('order_index');
         }
@@ -155,6 +161,12 @@ class OrderController extends AbstractController
 
             $em->flush();
 
+            // Log activity
+            $user = $this->getUser();
+            if ($user) {
+                $this->activityLogger->log($user, 'Updated Order', "Modified order #{$order->getId()} for {$order->getCustomerName()}");
+            }
+
             $this->addFlash('success', 'Order updated successfully.');
             return $this->redirectToRoute('order_index');
         }
@@ -168,8 +180,17 @@ class OrderController extends AbstractController
     public function delete(Request $request, \App\Entity\Order $order, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$order->getId(), $request->request->get('_token'))) {
+            $orderId = $order->getId();
+            $customerName = $order->getCustomerName();
+            
             $em->remove($order);
             $em->flush();
+
+            // Log activity
+            $user = $this->getUser();
+            if ($user) {
+                $this->activityLogger->log($user, 'Deleted Order', "Removed order #{$orderId} for {$customerName}");
+            }
 
             $this->addFlash('success', 'Order deleted successfully.');
         }
@@ -309,6 +330,12 @@ class OrderController extends AbstractController
         $em->persist($order);
         $em->flush();
 
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Created Order', "Created order #{$order->getId()} for {$order->getCustomerName()} from shop");
+        }
+
         $this->addFlash('success', 'Order created successfully.');
 
         return $this->redirectToRoute('order_show', ['id' => $order->getId()]);
@@ -330,6 +357,12 @@ class OrderController extends AbstractController
 
         $order->setStatus('cancelled');
         $em->flush();
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Cancelled Order', "Cancelled order #{$id} for {$order->getCustomerName()}");
+        }
 
         $this->addFlash('success', 'Order cancelled successfully.');
 

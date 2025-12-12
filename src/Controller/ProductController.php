@@ -88,6 +88,12 @@ class ProductController extends AbstractController
             $em->persist($product);
             $em->flush();
 
+            // Log activity
+            $user = $this->getUser();
+            if ($user) {
+                $this->activityLogger->log($user, 'Created Product', "Added new product: {$product->getName()}");
+            }
+
             $this->addFlash('success', '✅ Product added successfully!');
             return $this->redirectToRoute('product_index');
         }
@@ -127,6 +133,13 @@ class ProductController extends AbstractController
             $product->setAddToShop($addToShop);
 
             $em->flush();
+
+            // Log activity
+            $user = $this->getUser();
+            if ($user) {
+                $this->activityLogger->log($user, 'Updated Product', "Modified product: {$product->getName()}");
+            }
+
             $this->addFlash('success', '🌷 Product updated successfully!');
             return $this->redirectToRoute('product_index');
         }
@@ -143,8 +156,16 @@ class ProductController extends AbstractController
     #[Route('/{id}/delete', name: 'product_delete', methods: ['POST'])]
     public function delete(Product $product, EntityManagerInterface $em): Response
     {
+        $productName = $product->getName();
         $em->remove($product);
         $em->flush();
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $this->activityLogger->log($user, 'Deleted Product', "Removed product: {$productName}");
+        }
+
         $this->addFlash('success', '🗑️ Product deleted successfully!');
         return $this->redirectToRoute('product_index');
     }
@@ -174,6 +195,14 @@ class ProductController extends AbstractController
         }
 
         $em->flush();
+
+        // Log activity
+        $user = $this->getUser();
+        if ($user) {
+            $action = $status ? 'Added to Shop' : 'Removed from Shop';
+            $this->activityLogger->log($user, $action, "Product '{$product->getName()}' was $action");
+        }
+
         return new Response('OK');
     }
 }
