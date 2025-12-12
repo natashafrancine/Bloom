@@ -26,149 +26,7 @@
           font-family: 'Cascadia Code', monospace;
           color: var(--text-color);
           background-color: var(--light-bg);
-          background-image: url('{{ asset("uploads/pattern.png") }}');
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-position: center center;
-          background-attachment: fixed;
-          min-height: 100vh;
-          overflow-x: hidden;
-        }
-
-        .sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 280px;
-          height: 100vh;
-          background: linear-gradient(135deg, var(--pink) 0%, var(--pink-hover) 100%);
-          color: white;
-          padding: 30px 20px;
-          box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-          z-index: 1000;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-        }
-        .sidebar-content {
-          flex: 1;
-        }
-        .user-info {
-          position: absolute;
-          bottom: 20px;
-          left: 20px;
-          right: 20px;
-        }
-        .user-info .dropdown {
-          position: relative;
-        }
-        .user-info .dropdown-menu {
-          position: absolute;
-          left: auto;
-          right: 0;
-          min-width: 200px;
-          z-index: 1050;
-        }
-        .logo-img {
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          object-fit: cover;
-          margin-bottom: 30px;
-          border: 3px solid rgba(255,255,255,0.3);
-          transition: transform 0.3s;
-        }
-        .logo-img:hover {
-          transform: scale(1.05);
-        }
-        .nav-link {
-          color: white;
-          text-decoration: none;
-          display: block;
-          padding: 12px 20px;
-          margin: 8px 0;
-          border-radius: 12px;
-          transition: all 0.3s ease;
-          font-weight: 500;
-          position: relative;
-          font-family: 'Cascadia Code', monospace;
-        }
-        .nav-link:hover {
-          background: rgba(255,255,255,0.2);
-          transform: translateX(5px);
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .nav-link.active {
-          background: rgba(255,255,255,0.3);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .nav-link.active::before {
-          content: '🌸';
-          position: absolute;
-          left: -25px;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-        .main-content {
-          margin-left: 280px;
-          padding: 40px;
-          min-height: 100vh;
-        }
-        .fade-out {
-          animation: fadeIn 0.8s ease-in;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        footer {
-          background: linear-gradient(135deg, var(--pink), var(--pink-hover));
-          margin-top: auto;
-          border-radius: 15px 15px 0 0;
-          box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-          color: white;
-        }
-
-        .text-pink {
-          color: var(--pink);
-        }
-
-        .btn-pink {
-          background-color: var(--pink);
-          border-color: var(--pink);
-          transition: all 0.3s ease;
-        }
-
-        .btn-pink:hover {
-          background-color: var(--pink-hover);
-          border-color: var(--pink-hover);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Bauhaus 93 Regular', sans-serif;
-        }
-
-        .container {
-          max-width: 1200px;
-        }
-        @media (max-width: 768px) {
-          .sidebar {
-            width: 100%;
-            height: auto;
-            position: relative;
-            padding: 20px;
-          }
-          .main-content {
-            margin-left: 0;
-            padding: 20px;
-          }
-          .nav-link.active::before {
-            display: none;
-          }
-        }
-      </style>
+          background-image: url('</style>
     {% endblock %}
   </head>
 
@@ -232,6 +90,7 @@
           </div>
         {% endfor %}
         {% block body %}
+
         {% endblock %}
       </main>
 
@@ -393,6 +252,7 @@
   </script>
 
     {% block javascripts %}
+
     {% endblock %}
   </body>
 </html>
