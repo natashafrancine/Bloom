@@ -48,6 +48,14 @@ class EmailAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        // Redirect based on user roles
+        $user = $token->getUser();
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('app_root'));
+        } elseif (in_array('ROLE_STAFF', $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('app_home'));
+        }
+
         return new RedirectResponse($this->urlGenerator->generate('app_root'));
     }
 
