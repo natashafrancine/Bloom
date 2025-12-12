@@ -123,6 +123,38 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/profile/update', name: 'user_profile_update', methods: ['POST'])]
+    public function updateProfile(Request $request, User $user, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        // Check if user is updating their own profile
+        if ($this->getUser() !== $user) {
+            return $this->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $email = $request->request->get('email');
+        $password = $request->request->get('password');
+
+        // Update email if provided
+        if ($email && $email !== $user->getEmail()) {
+            $user->setEmail($email);
+        }
+
+        // Update password if provided
+        if ($password) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPassword);
+        }
+
+        try {
+            $em->flush();
+            return $this->json(['success' => true, 'message' => 'Profile updated successfully']);
+        } catch (UniqueConstraintViolationException $e) {
+            return $this->json(['success' => false, 'message' => 'Email already exists'], 400);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => 'An error occurred'], 500);
+        }
+    }
+
     #[Route('/{id}', name: 'user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {

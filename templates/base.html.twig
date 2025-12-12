@@ -186,8 +186,16 @@
     {% if app.user %}
     <div class="user-info">
       <p class="mb-2 text-white-50 small">Logged in as:</p>
-      <p class="mb-3 text-white">{{ app.user.email }}</p>
-      <a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm w-100">Logout</a>
+      <div class="dropdown">
+        <button class="btn btn-light btn-sm w-100 dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ app.user.email }}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="emailDropdown">
+          <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Logout</a></li>
+        </ul>
+      </div>
     </div>
     {% endif %}
   </aside>
@@ -222,6 +230,150 @@
 
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Profile Modal -->
+  {% if app.user %}
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom" style="border-color: var(--pink) !important;">
+          <h5 class="modal-title text-pink" id="profileModalLabel">Update Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="profileForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="profileEmail" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="profileEmail" placeholder="Enter new email" value="{{ app.user.email }}">
+              <small class="form-text text-muted">Leave blank to keep current email</small>
+            </div>
+            <div class="mb-3">
+              <label for="profilePassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="profilePassword" placeholder="Enter new password">
+              <small class="form-text text-muted">Leave blank to keep current password</small>
+            </div>
+            <div class="mb-3">
+              <label for="profilePasswordConfirm" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="profilePasswordConfirm" placeholder="Confirm new password">
+            </div>
+            <div id="profileErrorAlert" class="alert alert-danger d-none" role="alert"></div>
+            <div id="profileSuccessAlert" class="alert alert-success d-none" role="alert"></div>
+          </div>
+          <div class="modal-footer border-top">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-pink" id="saveProfileBtn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <style>
+    .btn-pink {
+      background-color: var(--pink);
+      border-color: var(--pink);
+      color: white;
+    }
+    .btn-pink:hover {
+      background-color: var(--pink-hover);
+      border-color: var(--pink-hover);
+      color: white;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const saveProfileBtn = document.getElementById('saveProfileBtn');
+      if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          updateProfile();
+        });
+      }
+    });
+
+    function updateProfile() {
+      const email = document.getElementById('profileEmail').value.trim();
+      const password = document.getElementById('profilePassword').value;
+      const passwordConfirm = document.getElementById('profilePasswordConfirm').value;
+      const errorAlert = document.getElementById('profileErrorAlert');
+      const successAlert = document.getElementById('profileSuccessAlert');
+
+      // Hide previous alerts
+      errorAlert.classList.add('d-none');
+      successAlert.classList.add('d-none');
+
+      // Validate form
+      if (email === '' && password === '') {
+        errorAlert.textContent = 'Please enter either a new email or password';
+        errorAlert.classList.remove('d-none');
+        return;
+      }
+
+      if (password && password !== passwordConfirm) {
+        errorAlert.textContent = 'Passwords do not match';
+        errorAlert.classList.remove('d-none');
+        return;
+      }
+
+      if (password && password.length < 6) {
+        errorAlert.textContent = 'Password must be at least 6 characters long';
+        errorAlert.classList.remove('d-none');
+        return;
+      }
+
+      // Prepare form data
+      const formData = new FormData();
+      if (email) {
+        formData.append('email', email);
+      }
+      if (password) {
+        formData.append('password', password);
+      }
+
+      // Get user ID from the page (set in a data attribute)
+      const userId = document.documentElement.getAttribute('data-user-id');
+      
+      fetch('{{ path("user_profile_update", {"id": app.user.id}) }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          successAlert.textContent = data.message;
+          successAlert.classList.remove('d-none');
+          
+          // Reset form after 2 seconds
+          setTimeout(() => {
+            document.getElementById('profileEmail').value = email || '{{ app.user.email }}';
+            document.getElementById('profilePassword').value = '';
+            document.getElementById('profilePasswordConfirm').value = '';
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+            modal.hide();
+            
+            // Show page-level success message
+            location.reload();
+          }, 2000);
+        } else {
+          errorAlert.textContent = data.message || 'An error occurred';
+          errorAlert.classList.remove('d-none');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        errorAlert.textContent = 'An error occurred while updating your profile';
+        errorAlert.classList.remove('d-none');
+      });
+    }
+  </script>
+
   {% block javascripts %}{% endblock %}
 </body>
 </html>
