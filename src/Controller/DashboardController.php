@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomepageController extends AbstractController
+class DashboardController extends AbstractController
 {
     public function __construct(
         private ProductRepository $productRepository,
@@ -35,7 +35,7 @@ class HomepageController extends AbstractController
         $recentOrders = $this->orderRepository->findRecent(5);
         $recentActivities = $this->activityLogRepository->findBy([], ['createdAt' => 'DESC'], 5);
 
-        return $this->render('homepage/dashboard.html.twig', [
+        return $this->render('dashboard/dashboard.html.twig', [
             'stats' => $stats,
             'recentOrders' => $recentOrders,
             'recentActivities' => $recentActivities,
@@ -45,7 +45,7 @@ class HomepageController extends AbstractController
     #[Route('/about', name: 'app_about')]
     public function about(): Response
     {
-        return $this->render('homepage/about.html.twig');
+        return $this->render('dashboard/about.html.twig');
     }
 
     #[Route('/contact', name: 'app_contact')]
