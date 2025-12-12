@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class DashboardController extends AbstractController
 {
@@ -24,8 +25,6 @@ class DashboardController extends AbstractController
 
     #[Route('/', name: 'app_root')]
     #[Route('/home', name: 'app_home')]
-    #[IsGranted('ROLE_ADMIN')]
-    #[IsGranted('ROLE_STAFF')]
     public function home(): Response
     {
         $stats = [
