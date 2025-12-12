@@ -335,6 +335,7 @@
       // Get user ID from the page (set in a data attribute)
       const userId = document.documentElement.getAttribute('data-user-id');
       
+      {% if app.user %}
       fetch('{{ path("user_profile_update", {"id": app.user.id}) }}', {
         method: 'POST',
         body: formData,
@@ -371,6 +372,7 @@
         errorAlert.textContent = 'An error occurred while updating your profile';
         errorAlert.classList.remove('d-none');
       });
+      {% endif %}
     }
   </script>
 
