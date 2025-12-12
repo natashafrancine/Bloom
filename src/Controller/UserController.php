@@ -155,6 +155,26 @@ class UserController extends AbstractController
         }
     }
 
+    #[Route('/{id}/toggle-status', name: 'user_toggle_status', methods: ['POST'])]
+    public function toggleStatus(Request $request, User $user, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('toggle_status'.$user->getId(), $request->request->get('_token'))) {
+            $newStatus = $user->getStatus() === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            $user->setStatus($newStatus);
+            $em->flush();
+
+            // Log activity
+            $currentUser = $this->getUser();
+            if ($currentUser) {
+                $this->activityLogger->log($currentUser, 'Updated User Status', "Changed {$user->getName()} status to {$newStatus}");
+            }
+
+            $this->addFlash('success', "User status updated to {$newStatus}");
+        }
+
+        return $this->redirectToRoute('user_index');
+    }
+
     #[Route('/{id}', name: 'user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {

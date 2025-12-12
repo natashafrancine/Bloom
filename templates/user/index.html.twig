@@ -29,6 +29,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Roles</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -53,6 +54,19 @@
                                     {% endfor %}
                                 </td>
                                 <td>
+                                    <form method="post" action="{{ path('user_toggle_status', {'id': user.id}) }}" style="display: inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('toggle_status' ~ user.id) }}">
+                                        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer;">
+                                            {% if user.status == 'ACTIVE' %}
+                                                <span class="badge bg-success">{{ user.status }}</span>
+                                            {% elseif user.status == 'INACTIVE' %}
+                                                <span class="badge bg-danger">{{ user.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ user.status }}</span>
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                </td>
                                     <a href="{{ path('user_show', {'id': user.id}) }}" class="btn btn-sm btn-info">👁️ View</a>
                                     <a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
                                     <form method="post" action="{{ path('user_delete', {'id': user.id}) }}" style="display: inline;">
@@ -63,7 +77,7 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="5" class="text-center">No users found.</td>
+                                <td colspan="6" class="text-center">No users found.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
