@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,10 @@ class EmailAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+        private UserRepository $userRepository
+    )
     {
     }
 
@@ -34,10 +38,17 @@ class EmailAuthenticator extends AbstractLoginFormAuthenticator
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
         return new Passport(
-            new UserBadge($email, function($user) {
+            new UserBadge($email, function($userIdentifier) {
+                // Load user from database
+                $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
+                
+                if (!$user) {
+                    throw new AuthenticationException('User not found.');
+                }
+                
                 // Check if user is active
                 if (!$user->isActive()) {
-                    throw new AuthenticationException('Your account is inactive. Please contact an administrator to reactivate your account.');
+                    throw new AuthenticationException('Your account is inactive. Please reach out to customer services.');
                 }
                 return $user;
             }),

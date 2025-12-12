@@ -55,6 +55,16 @@
       left: 20px;
       right: 20px;
     }
+    .user-info .dropdown {
+      position: relative;
+    }
+    .user-info .dropdown-menu {
+      position: absolute;
+      left: auto;
+      right: 0;
+      min-width: 200px;
+      z-index: 1050;
+    }
     .logo-img {
       width: 100px;
       height: 100px;
@@ -190,7 +200,7 @@
         <button class="btn btn-light btn-sm w-100 dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           {{ app.user.email }}
         </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="emailDropdown">
+        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="emailDropdown">
           <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Logout</a></li>
