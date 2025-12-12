@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, options: ['default' => 'ACTIVE'])]
     private string $status = 'ACTIVE';
 
-    #[ORM\OneToMany(targetEntity: ActivityLog::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: ActivityLog::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $activityLogs;
 
     public function __construct()
@@ -72,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        
+
         return array_unique($roles);
     }
 
