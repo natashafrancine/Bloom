@@ -37,9 +37,6 @@
     <p class="fs-5 mt-3 text-muted" style="font-family: 'Cascadia Code', monospace;">
         Manage your beautiful blooms — view, edit, and organize all available products here 🌸
     </p>
-    <a href="{{ path('product_new') }}" class="btn btn-pink mt-3 px-4 py-2 shadow-sm">
-        ➕ Add New Product
-    </a>
 </div>
 
 <!-- Flash Messages -->
@@ -51,19 +48,30 @@
 {% endfor %}
 
 <div class="table-responsive">
-
     <!-- Category Filter Buttons -->
-    <div class="mb-4 d-flex flex-wrap gap-2 justify-content-center">
-        <a href="{{ path('product_index') }}"
-           class="btn btn-sm btn-outline-secondary {{ currentCategory is null ? 'active' : '' }}">
-            All Categories
-        </a>
-        {% for cat in categories %}
-            <a href="{{ path('product_index', { category: cat.id }) }}"
-               class="btn btn-sm {% if currentCategory and currentCategory.id == cat.id %}btn-pink{% else %}btn-outline-secondary{% endif %}">
-                {{ cat.name }}
+    <div class="category-filter-wrapper mb-4">
+        <div class="filter-header text-center mb-3">
+            <h5 class="text-muted fw-bold" style="color: #DB2777; letter-spacing: 0.5px;">🌸 Filter by Category</h5>
+        </div>
+        <div class="category-filter-container">
+            <a href="{{ path('product_index') }}"
+               class="category-btn category-btn-all {{ currentCategory is null ? 'active' : '' }}">
+                <span class="filter-icon">📦</span>
+                <span class="filter-text">All Categories</span>
             </a>
-        {% endfor %}
+            {% for cat in categories %}
+                <a href="{{ path('product_index', { category: cat.id }) }}"
+                   class="category-btn {% if currentCategory and currentCategory.id == cat.id %}active{% endif %}">
+                    <span class="filter-icon">🌹</span>
+                    <span class="filter-text">{{ cat.name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add New Product Button - After Filter -->
+    <div class="mb-4">
+        <h5 class="text-muted" style="color: #DB2777; font-weight: 600;">📋 Your Products</h5>
     </div>
 
     {% if products is empty %}
@@ -141,8 +149,13 @@ $(document).ready(function() {
             info: "Showing _START_ to _END_ of _TOTAL_ products",
             infoEmpty: "No products available",
             infoFiltered: "(filtered from _MAX_ total products)"
-        }
+        },
+        dom: '<"d-flex justify-content-between align-items-center mb-3"<"dataTables_search_wrapper"f><"dataTables_button_wrapper">>lrtip'
     });
+    
+    // Add the "Add New Product" button beside the search
+    const addButton = '<a href="{{ path('product_new') }}" class="btn btn-pink px-3 py-2 shadow-sm" style="white-space: nowrap;">➕ Add New Product</a>';
+    $('.dataTables_button_wrapper').html(addButton);
 });
 
 </script>
@@ -173,6 +186,103 @@ body {
     font-weight: 600;
 }
 .btn-pink:hover { background-color: #BE185D; }
+
+/* Category Filter Styles */
+.category-filter-wrapper {
+    background: linear-gradient(135deg, #F9C5D1 0%, #FFF0F6 100%);
+    padding: 15px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.1);
+    border: 2px solid rgba(219, 39, 119, 0.15);
+}
+
+.category-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.category-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 2px solid #E9B4D3;
+    background-color: white;
+    color: #666;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.08);
+}
+
+.category-btn:hover {
+    border-color: #DB2777;
+    background-color: #FFF0F6;
+    color: #DB2777;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.2);
+}
+
+.category-btn.active {
+    background: linear-gradient(135deg, #DB2777 0%, #BE185D 100%);
+    color: white;
+    border-color: #BE185D;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4);
+    font-weight: 600;
+}
+
+.category-btn.active:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.5);
+}
+
+.category-btn-all {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+.category-btn-all:hover {
+    border-color: #999;
+    color: #333;
+}
+
+.category-btn-all.active {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    border-color: #5a6268;
+    color: white;
+}
+
+.filter-icon {
+    font-size: 12px;
+    display: inline-block;
+}
+
+.filter-text {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .category-filter-wrapper {
+        padding: 12px 10px;
+    }
+    
+    .category-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+    
+    .filter-icon {
+        font-size: 11px;
+    }
+}
 
 /* Row Hover */
 .table-hover tbody tr:hover {
