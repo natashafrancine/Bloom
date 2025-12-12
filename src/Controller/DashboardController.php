@@ -127,6 +127,4 @@ class DashboardController extends AbstractController
     {
         return $this->render('homepage/contact.html.twig');
     }
-
-
 }

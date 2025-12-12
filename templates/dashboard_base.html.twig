@@ -178,8 +178,10 @@
         #}
         <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}active{% endif %}" href="{{ path('product_index') }}">Products</a>
         <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}active{% endif %}" href="{{ path('order_index') }}">Orders</a>
+        {% if is_granted('ROLE_ADMIN') %}
         <a class="nav-link {% if app.request.attributes.get('_route') starts with 'user' %}active{% endif %}" href="{{ path('user_index') }}">Users</a>
         <a class="nav-link {% if app.request.attributes.get('_route') starts with 'activity_log' %}active{% endif %}" href="{{ path('activity_log_index') }}">Activity Logs</a>
+        {% endif %}
       </nav>
     </div>
 
