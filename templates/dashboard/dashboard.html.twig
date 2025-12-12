@@ -3,84 +3,67 @@
 {% block title %}Dashboard Overview - BLOOM{% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row mb-4">
+<div class="container-fluid dashboard-container">
+    <!-- Header Section -->
+    <div class="row mb-5">
         <div class="col-12">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard Overview</h1>
-            <p class="text-muted">Welcome back! Here's what's happening with your Bloom shop.</p>
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">🌸 Dashboard Overview</h1>
+                <p class="dashboard-subtitle">Welcome back! Here's your Bloom shop performance at a glance.</p>
+            </div>
         </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Products
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalProducts }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-flower1 fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+            <div class="stat-card stat-card-products shadow-sm">
+                <div class="stat-icon">
+                    <i class="bi bi-flower1"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Total Products</p>
+                    <h3 class="stat-value">{{ stats.totalProducts }}</h3>
+                    <small class="stat-detail">In your catalog</small>
                 </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Total Orders
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalOrders }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-receipt fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+            <div class="stat-card stat-card-orders shadow-sm">
+                <div class="stat-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Total Orders</p>
+                    <h3 class="stat-value">{{ stats.totalOrders }}</h3>
+                    <small class="stat-detail">All time sales</small>
                 </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Total Users
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalUsers }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-people fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+            <div class="stat-card stat-card-users shadow-sm">
+                <div class="stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Total Users</p>
+                    <h3 class="stat-value">{{ stats.totalUsers }}</h3>
+                    <small class="stat-detail">Shop customers</small>
                 </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Categories
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalCategories }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="bi bi-tags fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+            <div class="stat-card stat-card-categories shadow-sm">
+                <div class="stat-icon">
+                    <i class="bi bi-tags"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-label">Categories</p>
+                    <h3 class="stat-value">{{ stats.totalCategories }}</h3>
+                    <small class="stat-detail">Product collections</small>
                 </div>
             </div>
         </div>
@@ -89,26 +72,36 @@
     <!-- Recent Orders and Activities -->
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
+            <div class="card details-card shadow-sm">
+                <div class="card-header details-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-receipt-text me-2"></i>
+                        <h5 class="m-0">Recent Orders</h5>
+                    </div>
+                    <a href="#" class="link-pink">View All</a>
                 </div>
                 <div class="card-body">
                     {% if recentOrders is empty %}
-                        <p class="text-muted">No recent orders.</p>
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p class="text-muted">No recent orders yet</p>
+                        </div>
                     {% else %}
-                        <div class="list-group list-group-flush">
+                        <div class="order-list">
                             {% for order in recentOrders %}
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">Order #{{ order.id }}</h6>
-                                            <small class="text-muted">{{ order.createdAt|date('M j, Y g:i A') }}</small>
+                                <div class="order-item">
+                                    <div class="order-info">
+                                        <h6 class="order-id">Order #{{ order.id }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar"></i> {{ order.createdAt|date('M j, Y') }}
+                                        </small>
+                                        <div class="order-timestamp">
+                                            <i class="bi bi-clock"></i> {{ order.createdAt|date('g:i A') }}
                                         </div>
-                                        <span class="badge bg-{{ order.status == 'completed' ? 'success' : order.status == 'pending' ? 'warning' : 'secondary' }}">
-                                            {{ order.status|title }}
-                                        </span>
                                     </div>
+                                    <span class="order-badge badge-{{ order.status == 'completed' ? 'success' : order.status == 'pending' ? 'warning' : 'secondary' }}">
+                                        {{ order.status|title }}
+                                    </span>
                                 </div>
                             {% endfor %}
                         </div>
@@ -118,23 +111,45 @@
         </div>
 
         <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Activities</h6>
+            <div class="card details-card shadow-sm">
+                <div class="card-header details-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock-history me-2"></i>
+                        <h5 class="m-0">Recent Activities</h5>
+                    </div>
+                    <a href="#" class="link-pink">View All</a>
                 </div>
                 <div class="card-body">
                     {% if recentActivities is empty %}
-                        <p class="text-muted">No recent activities.</p>
+                        <div class="empty-state">
+                            <i class="bi bi-activity"></i>
+                            <p class="text-muted">No recent activities</p>
+                        </div>
                     {% else %}
-                        <div class="list-group list-group-flush">
+                        <div class="activity-list">
                             {% for activity in recentActivities %}
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">{{ activity.action }}</h6>
-                                            <small class="text-muted">{{ activity.createdAt|date('M j, Y g:i A') }}</small>
+                                {% set icon = activity.action|lower %}
+                                {% if 'created' in icon %}
+                                    {% set activityIcon = 'plus-circle' %}
+                                {% elseif 'updated' in icon %}
+                                    {% set activityIcon = 'pencil-square' %}
+                                {% elseif 'deleted' in icon %}
+                                    {% set activityIcon = 'trash' %}
+                                {% else %}
+                                    {% set activityIcon = 'check-circle' %}
+                                {% endif %}
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="bi bi-{{ activityIcon }}"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h6 class="activity-action">{{ activity.action }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> {{ activity.user ? activity.user.email : 'System' }}
+                                        </small>
+                                        <div class="activity-time">
+                                            <i class="bi bi-calendar"></i> {{ activity.createdAt|date('M j, Y g:i A') }}
                                         </div>
-                                        <small class="text-muted">{{ activity.user ? activity.user.email : 'System' }}</small>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -147,51 +162,327 @@
 </div>
 
 <style>
-.border-left-primary {
-    border-left: 0.25rem solid #4e73df !important;
+/* Dashboard Container */
+.dashboard-container {
+    padding: 20px;
 }
-.border-left-success {
-    border-left: 0.25rem solid #1cc88a !important;
+
+/* Header Styling */
+.dashboard-header {
+    background: linear-gradient(135deg, #DB2777 0%, #F472B6 100%);
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.25);
+    margin-bottom: 20px;
 }
-.border-left-info {
-    border-left: 0.25rem solid #36b9cc !important;
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-family: 'Bauhaus 93 Regular', sans-serif;
 }
-.border-left-warning {
-    border-left: 0.25rem solid #f6c23e !important;
+
+.dashboard-subtitle {
+    font-size: 1rem;
+    opacity: 0.95;
+    margin: 0;
 }
-.text-primary {
-    color: #5a5c69 !important;
-}
-.text-xs {
-    font-size: 0.7rem;
-}
-.font-weight-bold {
-    font-weight: 700 !important;
-}
-.text-uppercase {
-    text-transform: uppercase !important;
-}
-.h5 {
-    font-size: 1.25rem;
-}
-.mb-0 {
-    margin-bottom: 0 !important;
-}
-.text-gray-800 {
-    color: #5a5c69 !important;
-}
-.fa-2x {
-    font-size: 2em;
-}
-.text-gray-300 {
-    color: #dddfeb !important;
-}
-.card {
+
+/* Statistics Cards */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
     border: none;
-    border-radius: 0.35rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
-.shadow {
-    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(219, 39, 119, 0.2) !important;
+}
+
+.stat-card-products {
+    border-top-color: #DB2777;
+}
+
+.stat-card-products .stat-icon {
+    background: linear-gradient(135deg, #DB2777 0%, #F472B6 100%);
+}
+
+.stat-card-orders {
+    border-top-color: #7C3AED;
+}
+
+.stat-card-orders .stat-icon {
+    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
+}
+
+.stat-card-users {
+    border-top-color: #06B6D4;
+}
+
+.stat-card-users .stat-icon {
+    background: linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%);
+}
+
+.stat-card-categories {
+    border-top-color: #F59E0B;
+}
+
+.stat-card-categories .stat-icon {
+    background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3d2a2a;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.stat-detail {
+    color: #bbb;
+    font-size: 0.85rem;
+}
+
+/* Details Cards */
+.details-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.details-header {
+    background: linear-gradient(135deg, #DB2777 0%, #F472B6 100%);
+    border: none;
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.details-header h5 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.details-header i {
+    font-size: 1.3rem;
+}
+
+.link-pink {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.link-pink:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Order List */
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border-left: 3px solid #DB2777;
+    transition: all 0.3s ease;
+}
+
+.order-item:hover {
+    background: #f5f5f5;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.1);
+}
+
+.order-info {
+    flex: 1;
+}
+
+.order-id {
+    margin: 0;
+    color: #3d2a2a;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.order-timestamp {
+    font-size: 0.8rem;
+    color: #bbb;
+    margin-top: 5px;
+}
+
+.order-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success {
+    background: #D1FAE5;
+    color: #047857;
+}
+
+.badge-warning {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.badge-secondary {
+    background: #E5E7EB;
+    color: #6B7280;
+}
+
+/* Activity List */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border-left: 3px solid #DB2777;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: #f5f5f5;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.1);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #DB2777 0%, #F472B6 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-action {
+    margin: 0;
+    color: #3d2a2a;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.activity-time {
+    font-size: 0.8rem;
+    color: #bbb;
+    margin-top: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 1.8rem;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .details-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
 }
 </style>
 {% endblock %}
