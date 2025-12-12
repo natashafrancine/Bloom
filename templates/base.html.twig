@@ -16,198 +16,451 @@
     {% block stylesheets %}
       <style>
         :root {
-          --pink: #DB2777;
-          --pink-hover: #F472B6;
-          --light-bg: #FFF8FB;
-          --text-color: #3d2a2a;
+          --primary-pink: #E91E63;
+          --dark-pink: #C2185B;
+          --light-pink: #F06292;
+          --accent-purple: #9C27B0;
+          --light-bg: #FFF5F9;
+          --text-color: #2C2C2C;
+          --sidebar-width: 320px;
+        }
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        html, body {
+          height: 100%;
         }
 
         body {
-          font-family: 'Cascadia Code', monospace;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
           color: var(--text-color);
-          background-color: var(--light-bg);
-          background-image: url('{{ asset("uploads/pattern.png") }}');
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-position: center center;
+          background: linear-gradient(135deg, var(--light-bg) 0%, #FCE4EC 100%);
           background-attachment: fixed;
           min-height: 100vh;
           overflow-x: hidden;
+          display: flex;
+          flex-direction: row;
         }
 
+        /* ===== SIDEBAR STYLING ===== */
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
-          width: 280px;
+          width: var(--sidebar-width);
           height: 100vh;
-          background: linear-gradient(135deg, var(--pink) 0%, var(--pink-hover) 100%);
-          color: white;
-          padding: 30px 20px;
-          box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+          background: linear-gradient(180deg, var(--primary-pink) 0%, var(--accent-purple) 100%);
+          box-shadow: 4px 0 30px rgba(233, 30, 99, 0.25);
           z-index: 1000;
-          overflow-y: auto;
           display: flex;
           flex-direction: column;
+          overflow: hidden;
+          padding: 0;
         }
+
+        .sidebar::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+          border-radius: 50%;
+          filter: blur(40px);
+          pointer-events: none;
+        }
+
+        .sidebar::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 100px;
+          background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
+          pointer-events: none;
+        }
+
         .sidebar-content {
           flex: 1;
-        }
-        .user-info {
-          position: absolute;
-          bottom: 20px;
-          left: 20px;
-          right: 20px;
-        }
-        .user-info .dropdown {
+          overflow-y: auto;
+          padding: 40px 20px 30px;
+          display: flex;
+          flex-direction: column;
           position: relative;
+          z-index: 1;
         }
-        .user-info .dropdown-menu {
-          position: absolute;
-          left: auto;
-          right: 0;
-          min-width: 200px;
-          z-index: 1050;
+
+        .sidebar-content::-webkit-scrollbar {
+          width: 8px;
         }
+
+        .sidebar-content::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.35);
+          border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.55);
+        }
+
+        /* Logo */
         .logo-img {
           width: 100px;
           height: 100px;
           border-radius: 50%;
           object-fit: cover;
-          margin-bottom: 30px;
-          border: 3px solid rgba(255,255,255,0.3);
-          transition: transform 0.3s;
+          margin: 0 auto 30px;
+          border: 5px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.1);
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          cursor: pointer;
         }
+
         .logo-img:hover {
-          transform: scale(1.05);
+          transform: scale(1.12) rotateZ(-5deg);
+          border-color: rgba(255, 255, 255, 0.7);
+          box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(255, 255, 255, 0.2);
         }
+
+        /* Navigation */
+        nav {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 30px;
+        }
+
         .nav-link {
           color: white;
           text-decoration: none;
-          display: block;
-          padding: 12px 20px;
-          margin: 8px 0;
-          border-radius: 12px;
-          transition: all 0.3s ease;
-          font-weight: 500;
+          display: flex;
+          align-items: center;
+          padding: 16px 20px;
+          border-radius: 14px;
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          font-weight: 600;
+          font-size: 16px;
           position: relative;
-          font-family: 'Cascadia Code', monospace;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
-        .nav-link:hover {
-          background: rgba(255,255,255,0.2);
-          transform: translateX(5px);
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .nav-link.active {
-          background: rgba(255,255,255,0.3);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .nav-link.active::before {
-          content: '🌸';
+
+        .nav-link::before {
+          content: '';
           position: absolute;
-          left: -25px;
-          top: 50%;
-          transform: translateY(-50%);
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: rgba(255, 255, 255, 0.8);
+          transform: scaleY(0);
+          transform-origin: top;
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: translateX(8px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link:hover::before {
+          transform: scaleY(1);
+        }
+
+        .nav-link:hover::after {
+          opacity: 1;
+        }
+
+        /* Active state */
+        .nav-link[style*="background"] {
+          background: rgba(255, 255, 255, 0.25) !important;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link[style*="background"]::before {
+          transform: scaleY(1);
+        }
+
+        .nav-link i {
+          font-size: 18px;
+          min-width: 24px;
+        }
+
+        /* User Info */
+        .user-info {
+          border-top: 2px solid rgba(255, 255, 255, 0.2);
+          padding: 24px 20px;
+          margin-top: auto;
+          position: relative;
+          z-index: 2;
+          background: rgba(0, 0, 0, 0.08);
+          border-radius: 16px 16px 0 0;
+          backdrop-filter: blur(10px);
+        }
+
+        .user-info p {
+          margin: 0 0 14px 0;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+          opacity: 0.9;
+        }
+
+        .user-info .dropdown-toggle {
+          background: rgba(255, 255, 255, 0.95) !important;
+          border: 2px solid rgba(255, 255, 255, 0.4) !important;
+          color: var(--primary-pink) !important;
+          font-weight: 700;
+          font-size: 13px;
+          padding: 10px 14px !important;
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          border-radius: 10px !important;
+        }
+
+        .user-info .dropdown-toggle:hover {
+          background: white !important;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          transform: translateY(-2px);
+          border-color: rgba(233, 30, 99, 0.3) !important;
+        }
+
+        .user-info .dropdown-menu {
+          border-radius: 12px;
+          border: none;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+          margin-top: 8px;
+        }
+
+        .user-info .dropdown-item {
+          padding: 12px 16px;
+          font-weight: 500;
+          transition: all 0.2s ease;
+        }
+
+        .user-info .dropdown-item:hover {
+          background: #FFF0F5;
+          color: var(--primary-pink);
+        }
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
-          margin-left: 280px;
+          margin-left: var(--sidebar-width);
           padding: 40px;
           min-height: 100vh;
+          flex: 1;
+          overflow-y: auto;
         }
+
         .fade-out {
-          animation: fadeIn 0.8s ease-in;
+          animation: fadeIn 0.5s ease-out;
         }
+
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(15px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
+
+        /* Footer */
         footer {
-          background: linear-gradient(135deg, var(--pink), var(--pink-hover));
+          background: linear-gradient(135deg, var(--primary-pink) 0%, var(--accent-purple) 100%);
           margin-top: auto;
-          border-radius: 15px 15px 0 0;
-          box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+          border-radius: 16px 16px 0 0;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
           color: white;
+          padding: 20px !important;
         }
 
         .text-pink {
-          color: var(--pink);
+          color: var(--primary-pink);
         }
 
         .btn-pink {
-          background-color: var(--pink);
-          border-color: var(--pink);
-          transition: all 0.3s ease;
+          background: linear-gradient(135deg, var(--primary-pink) 0%, var(--light-pink) 100%);
+          border: none;
+          color: white;
+          font-weight: 600;
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
         }
 
         .btn-pink:hover {
-          background-color: var(--pink-hover);
-          border-color: var(--pink-hover);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 30px rgba(233, 30, 99, 0.4);
+          color: white;
         }
 
         h1, h2, h3, h4, h5, h6 {
-          font-family: 'Bauhaus 93 Regular', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          color: var(--text-color);
+          font-weight: 700;
         }
 
         .container {
           max-width: 1200px;
         }
+
+        /* Alert styling */
+        .alert {
+          border-radius: 12px;
+          border: none;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .alert-danger {
+          background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+          color: #B71C1C;
+          border-left: 4px solid #E53935;
+        }
+
+        .alert-success {
+          background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+          color: #1B5E20;
+          border-left: 4px solid #43A047;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
+          :root {
+            --sidebar-width: 100%;
+          }
+
+          body {
+            flex-direction: column;
+          }
+
           .sidebar {
+            position: relative;
             width: 100%;
             height: auto;
-            position: relative;
-            padding: 20px;
+            flex-direction: row;
+            border-radius: 0 0 20px 20px;
           }
+
+          .sidebar-content {
+            padding: 12px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+          }
+
+          .logo-img {
+            width: 60px;
+            height: 60px;
+            margin: 0 10px 0 0;
+          }
+
+          nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex: 1;
+            margin: 0;
+          }
+
+          .nav-link {
+            padding: 10px 12px;
+            font-size: 13px;
+            flex: 0 1 auto;
+          }
+
+          .user-info {
+            border-top: none;
+            border-left: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 15px;
+            margin: 0;
+            margin-left: auto;
+            border-radius: 0;
+            background: transparent;
+          }
+
           .main-content {
             margin-left: 0;
             padding: 20px;
-          }
-          .nav-link.active::before {
-            display: none;
           }
         }
       </style>
     {% endblock %}
   </head>
 
-  <body class="d-flex flex-column min-vh-100 fade-out">
+  <body class="fade-out">
     <!-- 🌸 Sidebar Navigation -->
     {% block header %}
       <aside class="sidebar">
         <div class="sidebar-content">
-          <div class="text-center">
+          <div>
             <a href="{{ path('app_home') }}">
               <img src="{{ asset('uploads/bloom 2.png') }}" alt="Bloom Logo" class="logo-img" />
-              {# <span class="brand-text">Admin Panel</span> #}
             </a>
           </div>
-          <nav class="mt-4">
-            <a class="nav-link {% if app.request.attributes.get('_route') == 'app_home' %}{% endif %}" href="{{ path('app_home') }}">Dashboard Overview</a>
-            {#
-        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_about' %}active{% endif %}" href="{{ path('app_about') }}">🌺 About</a>
-        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">📞 Contact</a>
-        #}
-            <a class="nav-link {% if app.request.attributes.get('_route') starts with 'product' %}{% endif %}" href="{{ path('product_index') }}">Products</a>
-            <a class="nav-link {% if app.request.attributes.get('_route') starts with 'order' %}{% endif %}" href="{{ path('order_index') }}">Orders</a>
+          <nav>
+            <a class="nav-link" href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}style="background: rgba(255,255,255,0.25);"{% endif %}>
+              <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+            <a class="nav-link" href="{{ path('product_index') }}" {% if app.request.attributes.get('_route') starts with 'product' %}style="background: rgba(255,255,255,0.25);"{% endif %}>
+              <i class="bi bi-flower1 me-2"></i> Products
+            </a>
+            <a class="nav-link" href="{{ path('order_index') }}" {% if app.request.attributes.get('_route') starts with 'order' %}style="background: rgba(255,255,255,0.25);"{% endif %}>
+              <i class="bi bi-bag-check me-2"></i> Orders
+            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+              <a class="nav-link" href="{{ path('user_index') }}" {% if app.request.attributes.get('_route') starts with 'user' %}style="background: rgba(255,255,255,0.25);"{% endif %}>
+                <i class="bi bi-people me-2"></i> Users
+              </a>
+              <a class="nav-link" href="{{ path('activity_log_index') }}" {% if app.request.attributes.get('_route') starts with 'activity_log' %}style="background: rgba(255,255,255,0.25);"{% endif %}>
+                <i class="bi bi-clock-history me-2"></i> Activity
+              </a>
+            {% endif %}
           </nav>
         </div>
 
         {% if app.user %}
           <div class="user-info">
-            <p class="mb-2 text-white-50 small">Logged in as:</p>
-            <div class="dropdown">
-              <button class="btn btn-light btn-sm w-100 dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown" aria-expanded="false">{{ app.user.email }}</button>
-              <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="emailDropdown">
+            <p>👤 Account</p>
+            <div class="dropdown w-100">
+              <button class="btn btn-light btn-sm w-100 dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ app.user.email }}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="emailDropdown">
                 <li>
-                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</a>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                    <i class="bi bi-person-circle me-2"></i> Profile
+                  </a>
                 </li>
+                <li><hr class="dropdown-divider" /></li>
                 <li>
-                  <hr class="dropdown-divider" />
-                </li>
-                <li>
-                  <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Logout</a>
+                  <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                    <i class="bi bi-box-arrow-left me-2"></i> Logout
+                  </a>
                 </li>
               </ul>
             </div>
@@ -221,17 +474,20 @@
       <main>
         {% for message in app.flashes('error') %}
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
             {{ message|raw }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         {% endfor %}
         {% for message in app.flashes('success') %}
           <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         {% endfor %}
         {% block body %}
+
         {% endblock %}
       </main>
 
@@ -285,112 +541,76 @@
       </div>
     {% endif %}
 
-    <style>
-    .btn-pink {
-      background-color: var(--pink);
-      border-color: var(--pink);
-      color: white;
-    }
-    .btn-pink:hover {
-      background-color: var(--pink-hover);
-      border-color: var(--pink-hover);
-      color: white;
-    }
-  </style>
-
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const saveProfileBtn = document.getElementById('saveProfileBtn');
-      if (saveProfileBtn) {
-        saveProfileBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          updateProfile();
-        });
-      }
-    });
-
-    function updateProfile() {
-      const email = document.getElementById('profileEmail').value.trim();
-      const password = document.getElementById('profilePassword').value;
-      const passwordConfirm = document.getElementById('profilePasswordConfirm').value;
-      const errorAlert = document.getElementById('profileErrorAlert');
-      const successAlert = document.getElementById('profileSuccessAlert');
-
-      // Hide previous alerts
-      errorAlert.classList.add('d-none');
-      successAlert.classList.add('d-none');
-
-      // Validate form
-      if (email === '' && password === '') {
-        errorAlert.textContent = 'Please enter either a new email or password';
-        errorAlert.classList.remove('d-none');
-        return;
-      }
-
-      if (password && password !== passwordConfirm) {
-        errorAlert.textContent = 'Passwords do not match';
-        errorAlert.classList.remove('d-none');
-        return;
-      }
-
-      if (password && password.length < 6) {
-        errorAlert.textContent = 'Password must be at least 6 characters long';
-        errorAlert.classList.remove('d-none');
-        return;
-      }
-
-      // Prepare form data
-      const formData = new FormData();
-      if (email) {
-        formData.append('email', email);
-      }
-      if (password) {
-        formData.append('password', password);
-      }
-
-      // Get user ID from the page (set in a data attribute)
-      const userId = document.documentElement.getAttribute('data-user-id');
-      
-      {% if app.user %}
-      fetch('{{ path("user_profile_update", {"id": app.user.id}) }}', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+      document.addEventListener('DOMContentLoaded', function() {
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        if (saveProfileBtn) {
+          saveProfileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            updateProfile();
+          });
         }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          successAlert.textContent = data.message;
-          successAlert.classList.remove('d-none');
-          
-          // Reset form after 2 seconds
-          setTimeout(() => {
-            document.getElementById('profileEmail').value = email || '{{ app.user.email }}';
-            document.getElementById('profilePassword').value = '';
-            document.getElementById('profilePasswordConfirm').value = '';
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
-            modal.hide();
-            
-            // Show page-level success message
-            location.reload();
-          }, 2000);
-        } else {
-          errorAlert.textContent = data.message || 'An error occurred';
-          errorAlert.classList.remove('d-none');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        errorAlert.textContent = 'An error occurred while updating your profile';
-        errorAlert.classList.remove('d-none');
       });
-      {% endif %}
-    }
-  </script>
+
+      function updateProfile() {
+        const email = document.getElementById('profileEmail').value.trim();
+        const password = document.getElementById('profilePassword').value;
+        const passwordConfirm = document.getElementById('profilePasswordConfirm').value;
+        const errorAlert = document.getElementById('profileErrorAlert');
+        const successAlert = document.getElementById('profileSuccessAlert');
+
+        errorAlert.classList.add('d-none');
+        successAlert.classList.add('d-none');
+
+        if (email === '' && password === '') {
+          errorAlert.textContent = 'Please enter either a new email or password';
+          errorAlert.classList.remove('d-none');
+          return;
+        }
+
+        if (password && password !== passwordConfirm) {
+          errorAlert.textContent = 'Passwords do not match';
+          errorAlert.classList.remove('d-none');
+          return;
+        }
+
+        if (password && password.length < 6) {
+          errorAlert.textContent = 'Password must be at least 6 characters long';
+          errorAlert.classList.remove('d-none');
+          return;
+        }
+
+        const formData = new FormData();
+        if (email) formData.append('email', email);
+        if (password) formData.append('password', password);
+
+        {% if app.user %}
+        fetch('{{ path("user_profile_update", {"id": app.user.id}) }}', {
+          method: 'POST',
+          body: formData,
+          headers: {'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            successAlert.textContent = data.message;
+            successAlert.classList.remove('d-none');
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
+          } else {
+            errorAlert.textContent = data.message || 'An error occurred';
+            errorAlert.classList.remove('d-none');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          errorAlert.textContent = 'An error occurred while updating your profile';
+          errorAlert.classList.remove('d-none');
+        });
+        {% endif %}
+      }
+    </script>
 
     {% block javascripts %}
     {% endblock %}
