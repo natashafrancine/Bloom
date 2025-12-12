@@ -37,11 +37,83 @@ class DashboardController extends AbstractController
         $recentOrders = $this->orderRepository->findRecent(5);
         $recentActivities = $this->activityLogRepository->findBy([], ['createdAt' => 'DESC'], 5);
 
+        // Analytics data for charts
+        $analyticsData = $this->generateAnalyticsData();
+
         return $this->render('dashboard/dashboard.html.twig', [
             'stats' => $stats,
             'recentOrders' => $recentOrders,
             'recentActivities' => $recentActivities,
+            'analyticsData' => $analyticsData,
         ]);
+    }
+
+    private function generateAnalyticsData(): array
+    {
+        // Last 7 days sales trend from database
+        $salesTrend = [];
+        $orderStatusDistribution = [
+            'Completed' => 0,
+            'Pending' => 0,
+            'Cancelled' => 0,
+        ];
+
+        // Get all orders and process them
+        $allOrders = $this->orderRepository->findAll();
+        $ordersBy7Days = [];
+
+        // Initialize last 7 days
+        for ($i = 6; $i >= 0; $i--) {
+            $date = new \DateTime('-' . $i . ' days');
+            $dateStr = $date->format('M d');
+            $ordersBy7Days[$dateStr] = 0;
+            $salesTrend[$dateStr] = 0;
+        }
+
+        // Process orders
+        foreach ($allOrders as $order) {
+            // Count order statuses
+            $status = $order->getStatus();
+            if (isset($orderStatusDistribution[$status])) {
+                $orderStatusDistribution[$status]++;
+            }
+
+            // Calculate sales trends for last 7 days
+            $orderDate = $order->getCreatedAt();
+            if ($orderDate) {
+                $dateStr = $orderDate->format('M d');
+                if (isset($ordersBy7Days[$dateStr])) {
+                    $ordersBy7Days[$dateStr]++;
+                    $totalAmount = (float)$order->getTotalAmount();
+                    if (isset($salesTrend[$dateStr])) {
+                        $salesTrend[$dateStr] += $totalAmount;
+                    }
+                }
+            }
+        }
+
+        // Format sales trend for charts
+        $salesTrendFormatted = [];
+        foreach ($salesTrend as $date => $amount) {
+            $salesTrendFormatted[] = [
+                'date' => $date,
+                'amount' => round($amount, 2)
+            ];
+        }
+
+        // Format order status for pie chart
+        $orderStatusFormatted = [];
+        foreach ($orderStatusDistribution as $status => $count) {
+            $orderStatusFormatted[] = [
+                'status' => $status,
+                'count' => $count
+            ];
+        }
+
+        return [
+            'salesTrend' => $salesTrendFormatted,
+            'orderStatus' => $orderStatusFormatted,
+        ];
     }
 
     #[Route('/about', name: 'app_about')]

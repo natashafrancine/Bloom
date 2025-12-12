@@ -69,7 +69,39 @@
         </div>
     </div>
 
+    <!-- Analytics & Charts Section -->
+    <div class="row mb-5">
+        <div class="col-lg-7 mb-4">
+            <div class="card details-card shadow-sm chart-card">
+                <div class="card-header details-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-graph-up me-2"></i>
+                        <h5 class="m-0">Sales Trend (Last 7 Days)</h5>
+                    </div>
+                </div>
+                <div class="card-body chart-body">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="card details-card shadow-sm chart-card">
+                <div class="card-header details-header">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-pie-chart me-2"></i>
+                        <h5 class="m-0">Order Status</h5>
+                    </div>
+                </div>
+                <div class="card-body chart-body text-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Orders and Activities -->
+
     <div class="row">
         <div class="col-lg-6 mb-4">
             <div class="card details-card shadow-sm">
@@ -467,6 +499,26 @@
     margin-top: 5px;
 }
 
+/* Chart Styling */
+.chart-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chart-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    min-height: 400px;
+}
+
+.chart-body canvas {
+    max-height: 350px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-title {
@@ -483,6 +535,102 @@
         gap: 10px;
         align-items: flex-start;
     }
+
+    .chart-body {
+        min-height: 300px;
+    }
 }
 </style>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // Sales Trend Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    const salesChart = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in analyticsData.salesTrend %}'{{ item.date }}'{{ not loop.last ? ',' : '' }}{% endfor %}],
+            datasets: [{
+                label: 'Sales Amount ($)',
+                data: [{% for item in analyticsData.salesTrend %}{{ item.amount }}{{ not loop.last ? ',' : '' }}{% endfor %}],
+                borderColor: '#DB2777',
+                backgroundColor: 'rgba(219, 39, 119, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#DB2777',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#F472B6',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: { size: 12, weight: 'bold' },
+                        color: '#666',
+                        padding: 15
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#999' },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: {
+                    ticks: { color: '#999' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    // Order Status Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+            labels: [{% for item in analyticsData.orderStatus %}'{{ item.status }}'{{ not loop.last ? ',' : '' }}{% endfor %}],
+            datasets: [{
+                data: [{% for item in analyticsData.orderStatus %}{{ item.count }}{{ not loop.last ? ',' : '' }}{% endfor %}],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.9)',
+                    'rgba(245, 158, 11, 0.9)',
+                    'rgba(239, 68, 68, 0.9)'
+                ],
+                borderColor: [
+                    '#10B981',
+                    '#F59E0B',
+                    '#EF4444'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 12 },
+                        color: '#666',
+                        padding: 15
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 {% endblock %}
