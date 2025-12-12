@@ -260,6 +260,106 @@
             padding: 5px 10px;
         }
     }
+
+    /* User Search Autocomplete */
+    .user-search-wrapper {
+        position: relative;
+    }
+
+    .user-search-input {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-family: 'Cascadia Code', monospace;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .user-search-input:focus {
+        border-color: var(--pink);
+        box-shadow: 0 0 0 0.2rem rgba(219, 39, 119, 0.25);
+        outline: none;
+    }
+
+    .user-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid var(--pink);
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 12px rgba(219, 39, 119, 0.2);
+    }
+
+    .user-suggestions.active {
+        display: block;
+    }
+
+    .user-suggestion-item {
+        padding: 12px 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .user-suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .user-suggestion-item:hover {
+        background-color: rgba(219, 39, 119, 0.1);
+        padding-left: 20px;
+    }
+
+    .user-suggestion-item.highlighted {
+        background-color: rgba(219, 39, 119, 0.15);
+        font-weight: 600;
+    }
+
+    .user-suggestion-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--pink), var(--pink-hover));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .user-suggestion-info {
+        flex: 1;
+    }
+
+    .user-suggestion-name {
+        font-weight: 600;
+        color: var(--pink);
+        margin-bottom: 2px;
+    }
+
+    .user-suggestion-email {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .suggestion-no-results {
+        padding: 20px 15px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
 </style>
 
 <div class="container-fluid">
@@ -272,17 +372,20 @@
             <!-- Filters -->
             <div class="filter-card">
                 <h6><i class="bi bi-funnel"></i> Filter Activities</h6>
-                <form method="GET" class="row g-3">
+                <form method="GET" class="row g-3" id="filterForm">
                     <div class="col-md-4">
-                        <label for="user" class="form-label fw-600" style="color: var(--pink);">Filter by User</label>
-                        <select name="user" id="user" class="form-select">
-                            <option value="">👥 All Users</option>
-                            {% for user in users %}
-                                <option value="{{ user.id }}" {% if user_filter == user.id %}selected{% endif %}>
-                                    👤 {{ user.name }} ({{ user.email }})
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <label for="userSearch" class="form-label fw-600" style="color: var(--pink);">Filter by User</label>
+                        <div class="user-search-wrapper">
+                            <input 
+                                type="text" 
+                                id="userSearch" 
+                                class="user-search-input" 
+                                placeholder="Type name or email..."
+                                autocomplete="off"
+                            >
+                            <input type="hidden" id="userFilter" name="user" value="{{ user_filter }}">
+                            <div class="user-suggestions" id="userSuggestions"></div>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <label for="action" class="form-label fw-600" style="color: var(--pink);">Filter by Action</label>
@@ -373,4 +476,131 @@
         </div>
     </div>
 </div>
+
+<script>
+    // User data from the template
+    const allUsers = [
+        {% for user in users %}
+            {
+                id: {{ user.id }},
+                name: '{{ user.name }}',
+                email: '{{ user.email }}'
+            }{{ not loop.last ? ',' : '' }}
+        {% endfor %}
+    ];
+
+    const userSearch = document.getElementById('userSearch');
+    const userFilter = document.getElementById('userFilter');
+    const userSuggestions = document.getElementById('userSuggestions');
+    const filterForm = document.getElementById('filterForm');
+    let currentHighlightIndex = -1;
+
+    // Initialize: If user was previously selected, show their name
+    if (userFilter.value) {
+        const selectedUser = allUsers.find(u => u.id == userFilter.value);
+        if (selectedUser) {
+            userSearch.value = selectedUser.name;
+        }
+    }
+
+    // Handle user search input
+    userSearch.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        currentHighlightIndex = -1;
+
+        if (!query) {
+            userSuggestions.classList.remove('active');
+            userFilter.value = '';
+            return;
+        }
+
+        // Filter users by name or email (word by word)
+        const filteredUsers = allUsers.filter(user => {
+            const name = user.name.toLowerCase();
+            const email = user.email.toLowerCase();
+            
+            // Split query into words and check if all words match
+            const queryWords = query.split(/\s+/);
+            return queryWords.every(word => name.includes(word) || email.includes(word));
+        });
+
+        // Display suggestions
+        if (filteredUsers.length > 0) {
+            userSuggestions.innerHTML = filteredUsers.map((user, index) => `
+                <div class="user-suggestion-item" data-user-id="${user.id}" data-index="${index}">
+                    <div class="user-suggestion-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                    <div class="user-suggestion-info">
+                        <div class="user-suggestion-name">${highlightMatch(user.name, query)}</div>
+                        <div class="user-suggestion-email">${highlightMatch(user.email, query)}</div>
+                    </div>
+                </div>
+            `).join('');
+            userSuggestions.classList.add('active');
+
+            // Add click handlers to suggestions
+            document.querySelectorAll('.user-suggestion-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const userId = item.getAttribute('data-user-id');
+                    const userName = allUsers.find(u => u.id == userId).name;
+                    userSearch.value = userName;
+                    userFilter.value = userId;
+                    userSuggestions.classList.remove('active');
+                });
+            });
+        } else {
+            userSuggestions.innerHTML = '<div class="suggestion-no-results">No users found</div>';
+            userSuggestions.classList.add('active');
+        }
+    });
+
+    // Keyboard navigation
+    userSearch.addEventListener('keydown', (e) => {
+        const items = document.querySelectorAll('.user-suggestion-item');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            currentHighlightIndex = Math.min(currentHighlightIndex + 1, items.length - 1);
+            updateHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentHighlightIndex = Math.max(currentHighlightIndex - 1, -1);
+            updateHighlight(items);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentHighlightIndex >= 0 && items[currentHighlightIndex]) {
+                items[currentHighlightIndex].click();
+            } else {
+                filterForm.submit();
+            }
+        } else if (e.key === 'Escape') {
+            userSuggestions.classList.remove('active');
+        }
+    });
+
+    function updateHighlight(items) {
+        items.forEach((item, index) => {
+            item.classList.toggle('highlighted', index === currentHighlightIndex);
+        });
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-search-wrapper')) {
+            userSuggestions.classList.remove('active');
+        }
+    });
+
+    // Highlight matching text
+    function highlightMatch(text, query) {
+        const queryWords = query.split(/\s+/);
+        let highlighted = text;
+        
+        queryWords.forEach(word => {
+            const regex = new RegExp(`(${word})`, 'gi');
+            highlighted = highlighted.replace(regex, '<strong style="color: var(--pink);">$1</strong>');
+        });
+        
+        return highlighted;
+    }
+</script>
 {% endblock %}
