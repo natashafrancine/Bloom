@@ -32,8 +32,7 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
-    #[ORM\OneToOne(inversedBy: 'product', targetEntity: Shop::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'shop_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Shop $shop = null;
 
     #[ORM\Column(type: 'boolean')]
@@ -121,11 +120,6 @@ class Product
 
     public function setShop(?Shop $shop): static
     {
-        // sync with shop entity
-        if ($shop !== null && $shop->getProduct() !== $this) {
-            $shop->setProduct($this);
-        }
-
         $this->shop = $shop;
         return $this;
     }
